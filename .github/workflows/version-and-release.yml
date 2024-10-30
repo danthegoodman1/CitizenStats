@@ -38,7 +38,6 @@ jobs:
 
       - name: Build Electron app
         run: |
-          npm run package:win
           npm run make
 
       - name: Bump version and push tag
