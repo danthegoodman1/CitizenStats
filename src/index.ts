@@ -16,7 +16,21 @@ log.transports.file.format = '[{y}-{m}-{d} {h}:{i}:{s}] [{level}] {text}';
 log.transports.file.getFile().clear(); // Clear log file on startup
 
 const version = app.getVersion();
-const icon = nativeImage.createFromPath(join(__dirname, 'assets', 'logo-64.png'));
+let icon;
+try {
+	const iconPath = join(__dirname, 'assets', 'logo-64.png');
+	icon = nativeImage.createFromPath(iconPath);
+	if (icon.isEmpty()) {
+		log.error(`Failed to load icon from path: ${iconPath}`);
+		// Fallback to a blank icon to prevent crashes
+		icon = nativeImage.createEmpty();
+	} else {
+		log.info(`Successfully loaded icon from: ${iconPath}`);
+	}
+} catch (error) {
+	log.error('Error creating icon:', error);
+	icon = nativeImage.createEmpty();
+}
 let tailer: FileTailer | null = null;
 
 // handles the finalization of the squirel setup/update process. E.g. adds start menu icons
