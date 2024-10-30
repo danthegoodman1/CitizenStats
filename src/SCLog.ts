@@ -83,6 +83,11 @@ export function parseAuthLogLine(logLine: string): SCAuthLogLine | null {
     };
 }
 
+export interface SCLogPayload {
+    player: SCAuthLogLine | null;
+    events: SCLogLine[];
+}
+
 export class LogShipper {
     private buffer: SCLogLine[] = [];
     private playerInfo: SCAuthLogLine | null = null;
