@@ -4,6 +4,11 @@ import { FileTailer } from './tailLog';
 import { parseLogLine } from './SCLog';
 import log from 'electron-log';
 
+// Add log configuration near the top of the file, after imports
+log.transports.file.maxSize = 10 * 1024 * 1024; // 10MB
+log.transports.file.format = '[{y}-{m}-{d} {h}:{i}:{s}] [{level}] {text}';
+log.transports.file.getFile().clear(); // Clear log file on startup
+
 const version = app.getVersion();
 const icon = nativeImage.createFromPath(join(__dirname, 'assets', 'logo-64.png'));
 let tailer: FileTailer | null = null;
