@@ -1,7 +1,7 @@
 module.exports = {
   packagerConfig: {
     asar: true,
-    icon: "icons/icon",
+    icon: "./logo-64",
   },
   rebuildConfig: {},
   makers: [
@@ -9,10 +9,8 @@ module.exports = {
       name: "@electron-forge/maker-squirrel",
       /** @type {import("@electron-forge/maker-squirrel").MakerSquirrelConfig} MakerSquirrelConfig */
       config: {
-        setupIcon: "logo_64.ico",
-        // this is really stupid...
-        // iconUrl: "https://tangia.co/favicon.ico",
-        icon: "logo_64.ico",
+        setupIcon: "./logo-64.ico",
+        icon: "./logo-64.ico",
         name: "CitizenStats",
       },
     },
