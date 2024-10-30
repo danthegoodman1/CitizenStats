@@ -55,16 +55,15 @@ export interface SCAuthLogLine extends SCLogLine {
 }
 
 export function parseAuthLogLine(logLine: string): SCAuthLogLine | null {
-    // First parse using the base parser
     const baseParsed = parseLogLine(logLine);
     if (!baseParsed) return null;
 
-    // Parse the content section for character details
-    const regex = /Character: createdAt (\d+) - updatedAt (\d+) - geid (\d+) - accountId (\d+) - name (\w+) - state (\w+)/;
+    // Updated regex to allow for additional content after the state
+    const regex = /Character: createdAt (\d+) - updatedAt (\d+) - geid (\d+) - accountId (\d+) - name (\w+) - state (\w+)(?:\s+.*)?$/;
     const matches = baseParsed.content.match(regex);
 
     if (!matches) {
-        console.warn(`Failed to parse character details from log line: ${logLine}`);
+        console.warn(`Failed to parse character details. Content: "${baseParsed.content}"`);
         return null;
     }
 

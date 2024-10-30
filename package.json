@@ -7,6 +7,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
+    "test": "vitest",
     "lint": "eslint -c .eslintrc --ext .ts ./src",
     "dev": "npm run build && electron ./dist/index.js",
     "start": "electron-forge start",
@@ -28,7 +29,8 @@
     "@types/node": "^20.5.3",
     "electron": "^26.0.0",
     "electron-winstaller": "^5.4.0",
-    "typescript": "^5.1.6"
+    "typescript": "^5.1.6",
+    "vitest": "^2.1.4"
   },
   "dependencies": {
     "electron-log": "^5.2.0",
