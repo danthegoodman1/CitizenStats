@@ -33,7 +33,11 @@ NEVER install this log collector via ANY OTHER MEANS. We will never distribute t
 
 ## Privacy Policy and Terms of Service
 
-See how we handle your [Privacy](PRIVACY.md) and ensure you do not violate our [Terms](TERMS.md)
+See how we handle your [Privacy](PRIVACY.md) and ensure you do not violate our [Terms](TERMS.md).
+
+TLDR:
+- We only collect the logs that are needed for leaderboards (and nothing else)
+- No reverse engineering or tampering with the API
 
 ## Contributing
 
