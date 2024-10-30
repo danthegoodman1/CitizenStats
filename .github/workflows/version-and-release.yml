@@ -48,7 +48,7 @@ jobs:
           GOOS: windows
           GOARCH: 386
         run: |
-          go build -ldflags="-H=windowsgui -X main.Version=${VERSION} -X main.mode=run" -o ./dist/citizenstats.exe
+          go build -ldflags="-H=windowsgui -X main.Version=${VERSION} gologger.Version=${VERSION} -X main.mode=run" -o ./dist/citizenstats.exe
 
       # Build install mode binary (keep console)
       - name: Build install mode
@@ -57,7 +57,7 @@ jobs:
           GOOS: windows
           GOARCH: 386
         run: |
-          go build -ldflags="-X main.Version=${VERSION} -X main.mode=install" -o ./dist/citizenstats-installer.exe
+          go build -ldflags="-X main.Version=${VERSION} gologger.Version=${VERSION} -X main.mode=install" -o ./dist/citizenstats-installer.exe
 
       # Build uninstall mode binary (keep console)
       - name: Build uninstall mode
@@ -66,7 +66,7 @@ jobs:
           GOOS: windows
           GOARCH: 386
         run: |
-          go build -ldflags="-X main.Version=${VERSION} -X main.mode=uninstall" -o ./dist/citizenstats-uninstaller.exe
+          go build -ldflags="-X main.Version=${VERSION} gologger.Version=${VERSION} -X main.mode=uninstall" -o ./dist/citizenstats-uninstaller.exe
 
       # Create GitHub release
       - name: Create Release
