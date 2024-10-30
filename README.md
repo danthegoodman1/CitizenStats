@@ -40,3 +40,5 @@ See how we handle your [Privacy](PRIVACY.md) and ensure you do not violate our [
 If you'd like to suggest a feature, please open an issue in this repo with the `Feature Request` template. The more info you provide, the better!
 
 Contributions are open and welcome! But please open an issue so we can discuss first, as we won't accept unplanned contributions.
+
+While this log collector is open source (so that users can review code and compile themselves), the discord bot and website are currently closed source for operational efficiency. They may be opened in the future!
