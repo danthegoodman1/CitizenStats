@@ -79,7 +79,7 @@ if (!gotTheLock) {
 							log.error('Failed to parse player info from line:', line);
 							return;
 						}
-						log.info('Player info:', playerInfo);
+						log.info('Detected player info:', playerInfo);
 					}
 				}
 			},
