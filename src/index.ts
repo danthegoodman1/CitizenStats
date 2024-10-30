@@ -5,8 +5,8 @@ import { parseAuthLogLine, parseLogLine, SCAuthLogLine } from './SCLog.js';
 import log from 'electron-log';
 import { LogShipper } from './SCLog.js';
 import config from './config.json';
-
 import { updateElectronApp } from 'update-electron-app'
+
 updateElectronApp({
 	logger: log,
 })
