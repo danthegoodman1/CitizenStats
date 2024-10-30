@@ -8,9 +8,8 @@ assignees: ''
 
 ## Type of Feature
 <!-- Check the relevant type(s) with an [x] -->
-- [ ] Discord Bot
-- [ ] Stats Tracking
-- [ ] Website
+- [ ] Discord Bot Capability
+- [ ] Website Capability
 - [ ] Log Collection
 - [ ] Other
 
