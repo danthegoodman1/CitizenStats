@@ -65,7 +65,7 @@ func install() {
 	}
 
 	// Write the uninstaller binary
-	uninstallerPath := filepath.Join(installDir, "uninstall.exe")
+	uninstallerPath := filepath.Join(installDir, "citizenstats-uninstaller.exe")
 	if err := os.WriteFile(uninstallerPath, uninstallerBinary, 0755); err != nil {
 		logger.Fatal().Err(err).Msg("failed to write uninstaller")
 	}
@@ -89,7 +89,7 @@ func uninstall() {
 	logger.Info().Msg("starting uninstallation")
 
 	installDir := `C:\Program Files\CitizenStats`
-	exePath := filepath.Join(installDir, "CitizenStats.exe")
+	exePath := filepath.Join(installDir, "citizenstats.exe")
 
 	// Disable startup
 	if err := utils.ManageStartup(exePath, false); err != nil {
