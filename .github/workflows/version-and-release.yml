@@ -80,6 +80,11 @@ jobs:
         run: |
           go install github.com/mh-cbon/go-msi@latest
 
+      # Initialize go-msi template
+      - name: Init go-msi template
+        run: |
+          go-msi init --path wix.json
+
       # Create MSI installer
       - name: Create MSI
         env:
