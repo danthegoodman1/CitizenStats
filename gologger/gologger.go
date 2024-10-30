@@ -12,9 +12,8 @@ import (
 	"github.com/rs/zerolog"
 )
 
-type ctxKey string
-
-const ReqIDKey ctxKey = "reqID"
+// Version is set during build using ldflags
+var Version = "dev"
 
 func init() {
 	l := NewLogger()
@@ -58,7 +57,7 @@ func NewLogger() zerolog.Logger {
 
 	zerolog.TimestampFieldName = "time"
 
-	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
+	logger := zerolog.New(os.Stdout).With().Timestamp().Str("version", Version).Logger()
 
 	logger = logger.Hook(CallerHook{})
 

@@ -7,7 +7,17 @@ import (
 
 var logger = gologger.NewLogger()
 
+var installMode bool
+
 func main() {
+	if installMode {
+		install()
+	} else {
+		run()
+	}
+}
+
+func run() {
 	logger.Info().Msg("starting")
 
 	systray.Run(onReady, onExit)
