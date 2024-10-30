@@ -1,7 +1,7 @@
 import { app, Tray, Menu, nativeImage } from 'electron';
 import { join } from 'path';
 import { FileTailer } from './tailLog';
-import { parseLogLine } from './SCLog';
+import { parseAuthLogLine, parseLogLine, SCAuthLogLine } from './SCLog';
 import log from 'electron-log';
 
 import { updateElectronApp } from 'update-electron-app'
@@ -43,13 +43,24 @@ if (!gotTheLock) {
 		const logPath = 'C:\\Program Files\\Roberts Space Industries\\StarCitizen\\LIVE\\Game.log';
 		tailer = new FileTailer(logPath);
 
+		let playerInfo: SCAuthLogLine | null = null;
+
 		// Start tailing when app starts
 		tailer.start({
 			onLine: (line) => {
 				const parsedLine = parseLogLine(line);
 				if (parsedLine) {
 					// Handle the parsed log line here
-					log.info('Parsed log:', parsedLine);
+					log.debug('Parsed log:', parsedLine);
+					if (!['Corpse', 'Vehicle Destruction', 'Actor Death', 'AccountLoginCharacterStatus_Character'].includes(parsedLine.kind)) {
+						// we don't care about other logs
+						return
+					}
+
+					if (parsedLine.kind === 'AccountLoginCharacterStatus_Character') {
+						playerInfo = parseAuthLogLine(parsedLine.content);
+						log.info('Player info:', playerInfo);
+					}
 				}
 			},
 			onError: (error) => {
