@@ -4,9 +4,11 @@ import (
 	"context"
 	"os"
 	"path/filepath"
+	
+	"githubcom/danthegoodman1/CitizenStats/icon"
+	"githubcom/danthegoodman1/CitizenStats/utils"
 
 	"github.com/danthegoodman1/CitizenStats/gologger"
-	"github.com/danthegoodman1/CitizenStats/utils"
 	"github.com/getlantern/systray"
 	"golang.org/x/sys/windows"
 )
@@ -36,11 +38,51 @@ func run() {
 }
 
 func onReady() {
+	// Set icon from embedded resource
+	systray.SetTemplateIcon(icon.Data, icon.Data)
 
+	systray.SetTitle("CitizenStats")
+	systray.SetTooltip("CitizenStats Status")
+
+	// Add status menu item (disabled/non-clickable)
+	mStatus := systray.AddMenuItem("Status: Running", "Current Status")
+	mStatus.Disable()
+
+	// Add startup toggle
+	startupPath := filepath.Join(`C:\Program Files\CitizenStats`, "citizenstats.exe")
+	mStartup := systray.AddMenuItemCheckbox("Start at Login", "Toggle startup at login", true)
+
+	// Add quit button
+	mQuit := systray.AddMenuItem("Quit", "Exit CitizenStats")
+
+	// Handle menu items in a goroutine
+	go func() {
+		for {
+			select {
+			case <-mStartup.ClickedCh:
+				if mStartup.Checked() {
+					mStartup.Uncheck()
+					if err := utils.ManageStartup(startupPath, false); err != nil {
+						logger.Error().Err(err).Msg("failed to disable startup")
+						mStartup.Check() // Revert on failure
+					}
+				} else {
+					mStartup.Check()
+					if err := utils.ManageStartup(startupPath, true); err != nil {
+						logger.Error().Err(err).Msg("failed to enable startup")
+						mStartup.Uncheck() // Revert on failure
+					}
+				}
+			case <-mQuit.ClickedCh:
+				systray.Quit()
+				return
+			}
+		}
+	}()
 }
 
 func onExit() {
-
+	logger.Info().Msg("shutting down")
 }
 
 func install() {
