@@ -81,6 +81,8 @@ jobs:
           go install github.com/mh-cbon/go-msi@latest
           mkdir -p $GITHUB_WORKSPACE/templates
           curl -L https://raw.githubusercontent.com/mh-cbon/go-msi/master/templates/product.wxs -o $GITHUB_WORKSPACE/templates/product.wxs
+          curl -L https://raw.githubusercontent.com/mh-cbon/go-msi/master/templates/LicenseAgreementDlg_HK.wsx -o $GITHUB_WORKSPACE/templates/LicenseAgreementDlg_HK.wsx
+          curl -L https://raw.githubusercontent.com/mh-cbon/go-msi/master/templates/WixUI_HK.wsx -o $GITHUB_WORKSPACE/templates/WixUI_HK.wsx
 
       # Create MSI installer
       - name: Create MSI
