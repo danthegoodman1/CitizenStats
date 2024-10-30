@@ -8,6 +8,7 @@ assignees: ''
 
 ## Type of Feature
 <!-- Check the relevant type(s) with an [x] -->
+- [ ] Leaderboard/Stats
 - [ ] Discord Bot Capability
 - [ ] Website Capability
 - [ ] Log Collection
