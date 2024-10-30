@@ -1,7 +1,7 @@
 import { app, Tray, Menu, nativeImage } from 'electron';
 import { join } from 'path';
-import { FileTailer } from './tailLog';
-import { parseAuthLogLine, parseLogLine, SCAuthLogLine } from './SCLog';
+import { FileTailer } from './tailLog.js';
+import { parseAuthLogLine, parseLogLine, SCAuthLogLine } from './SCLog.js';
 import log from 'electron-log';
 
 import { updateElectronApp } from 'update-electron-app'
@@ -55,7 +55,7 @@ if (!gotTheLock) {
 						// we don't care about other logs
 						return
 					}
-					
+
 					log.debug('Parsed log of interest:', parsedLine);
 
 					if (parsedLine.kind === 'AccountLoginCharacterStatus_Character') {
