@@ -8,8 +8,8 @@ module.exports = {
       name: "@electron-forge/maker-squirrel",
       /** @type {import("@electron-forge/maker-squirrel").MakerSquirrelConfig} MakerSquirrelConfig */
       config: {
-        setupIcon: "./logo-64.ico",
-        icon: "./logo-64.ico",
+        setupIcon: "./logo_64.ico",
+        icon: "./logo_64.ico",
         name: "CitizenStats",
       },
     },
