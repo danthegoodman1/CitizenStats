@@ -1,0 +1,39 @@
+{
+  "name": "citizenstats",
+  "version": "0.0.2",
+  "description": "Star Citizen log tailer for aggregating player stats",
+  "repository": "https://github.com/danthegoodman1/CitizenStats",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "lint": "eslint -c .eslintrc --ext .ts ./src",
+    "dev": "npm run build && electron ./dist/index.js",
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "package:win": "electron-forge package --platform win32 --arch x64",
+    "make": "electron-forge make --platform win32 --arch x64",
+    "create-installer-win": "node build/installer.js"
+  },
+  "keywords": [],
+  "author": "Dan Goodman (github.com/danthegoodman1)",
+  "license": "ISC",
+  "devDependencies": {
+    "@electron-forge/cli": "^6.4.1",
+    "@electron-forge/maker-deb": "^6.4.1",
+    "@electron-forge/maker-rpm": "^6.4.1",
+    "@electron-forge/maker-squirrel": "^6.4.1",
+    "@electron-forge/maker-zip": "^6.4.1",
+    "@electron-forge/plugin-auto-unpack-natives": "^6.4.1",
+    "@types/node": "^20.5.3",
+    "electron": "^26.0.0",
+    "electron-winstaller": "^5.4.0",
+    "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "electron-log": "^5.2.0",
+    "electron-squirrel-startup": "^1.0.1",
+    "electron-store": "^8.1.0",
+    "update-electron-app": "^3.0.0"
+  }
+}
