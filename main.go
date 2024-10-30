@@ -19,6 +19,7 @@ func main() {
 	switch mode {
 	case "install":
 		install()
+		run()
 	case "uninstall":
 		uninstall()
 	case "run":
@@ -79,7 +80,7 @@ func install() {
 	// Show success message box
 	showMessageBox(
 		"CitizenStats Installation",
-		"CitizenStats has been successfully installed!\n\nThe application will start automatically when you restart your computer.",
+		"CitizenStats has been successfully installed!\n\nThe application will start now, and automatically on login (can be disabled in the system tray menu).",
 		windows.MB_OK|windows.MB_ICONINFORMATION,
 	)
 }
