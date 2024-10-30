@@ -53,6 +53,11 @@ jobs:
         run: |
           npm run make
 
+      - name: List output files
+        run: |
+          echo "Listing out/make contents:"
+          ls -R out/make/
+
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
@@ -61,6 +66,6 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            out/make/squirrel.windows/x64/*
+            out/make/**/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
