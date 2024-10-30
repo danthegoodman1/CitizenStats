@@ -9,10 +9,6 @@ import { updateElectronApp, UpdateSourceType } from 'update-electron-app'
 
 updateElectronApp({
 	logger: log,
-	// updateSource: {
-  //   type: UpdateSourceType.ElectronPublicUpdateService,
-  //   repo: 'danthegoodman1/CitizenStats'
-  // },
 })
 
 // Add log configuration near the top of the file, after imports
