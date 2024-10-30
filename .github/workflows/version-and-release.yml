@@ -50,23 +50,23 @@ jobs:
         run: |
           go build -ldflags="-H=windowsgui -X main.Version=${VERSION} -X gologger.Version=${VERSION} -X main.mode=run" -o ./dist/citizenstats.exe
 
-      # Build install mode binary (keep console)
-      - name: Build install mode
-        env:
-          VERSION: ${{ steps.tag.outputs.new_tag }}
-          GOOS: windows
-          GOARCH: amd64
-        run: |
-          go build -ldflags="-X main.Version=${VERSION} -X gologger.Version=${VERSION} -X main.mode=install" -o ./dist/citizenstats-installer.exe
+      # # Build install mode binary (keep console)
+      # - name: Build install mode
+      #   env:
+      #     VERSION: ${{ steps.tag.outputs.new_tag }}
+      #     GOOS: windows
+      #     GOARCH: amd64
+      #   run: |
+      #     go build -ldflags="-X main.Version=${VERSION} -X gologger.Version=${VERSION} -X main.mode=install" -o ./dist/citizenstats-installer.exe
 
-      # Build uninstall mode binary (keep console)
-      - name: Build uninstall mode
-        env:
-          VERSION: ${{ steps.tag.outputs.new_tag }}
-          GOOS: windows
-          GOARCH: amd64
-        run: |
-          go build -ldflags="-X main.Version=${VERSION} -X gologger.Version=${VERSION} -X main.mode=uninstall" -o ./dist/citizenstats-uninstaller.exe
+      # # Build uninstall mode binary (keep console)
+      # - name: Build uninstall mode
+      #   env:
+      #     VERSION: ${{ steps.tag.outputs.new_tag }}
+      #     GOOS: windows
+      #     GOARCH: amd64
+      #   run: |
+      #     go build -ldflags="-X main.Version=${VERSION} -X gologger.Version=${VERSION} -X main.mode=uninstall" -o ./dist/citizenstats-uninstaller.exe
 
       # Install WiX toolset
       - name: Install WiX
@@ -100,8 +100,6 @@ jobs:
         with:
           files: |
             ./dist/citizenstats.exe
-            ./dist/citizenstats-installer.exe
-            ./dist/citizenstats-uninstaller.exe
             ./dist/citizenstats-${{ steps.tag.outputs.new_tag }}.msi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -116,8 +114,6 @@ jobs:
           prerelease: false
           files: |
             ./dist/citizenstats.exe
-            ./dist/citizenstats-installer.exe
-            ./dist/citizenstats-uninstaller.exe
             ./dist/citizenstats-${{ steps.tag.outputs.new_tag }}.msi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
