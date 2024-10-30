@@ -80,17 +80,20 @@ jobs:
         run: |
           go install github.com/mh-cbon/go-msi@latest
 
-      # Initialize go-msi template
-      - name: Init go-msi template
+      # Setup go-msi template
+      - name: Setup go-msi
         run: |
-          go-msi init --path wix.json
+          mkdir -p templates
+          go-msi check-json
+          go-msi set-guid
+          go-msi generate-templates --path wix.json --out templates/
 
       # Create MSI installer
       - name: Create MSI
         env:
           VERSION: ${{ steps.tag.outputs.new_tag }}
         run: |
-          go-msi make --msi ./dist/citizenstats-$VERSION.msi --version ${VERSION#v} --src .
+          go-msi make --msi ./dist/citizenstats-$VERSION.msi --version ${VERSION#v} --src . --path wix.json
 
       # Add the MSI to the release files
       - name: Update Release Files
