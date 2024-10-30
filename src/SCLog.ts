@@ -84,7 +84,7 @@ export function parseAuthLogLine(logLine: string): SCAuthLogLine | null {
 }
 
 export interface SCLogPayload {
-    player: SCAuthLogLine | null;
+    player: SCAuthLogLine;
     events: SCLogLine[];
 }
 
