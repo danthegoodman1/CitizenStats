@@ -9,10 +9,10 @@ module.exports = {
       name: "@electron-forge/maker-squirrel",
       /** @type {import("@electron-forge/maker-squirrel").MakerSquirrelConfig} MakerSquirrelConfig */
       config: {
-        setupIcon: "./src/assets/logo_64.ico",
+        setupIcon: "logo_64.ico",
         // this is really stupid...
         // iconUrl: "https://tangia.co/favicon.ico",
-        icon: "./src/assets/logo_64.ico",
+        icon: "logo_64.ico",
         name: "CitizenStats",
       },
     },
