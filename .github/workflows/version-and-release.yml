@@ -5,6 +5,11 @@ on:
     branches:
       - main
 
+# Add permissions block
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -23,7 +28,7 @@ jobs:
 
       # Get next version and create tag
       - name: Bump version and push tag
-        uses: anothrNick/github-tag-action@v1
+        uses: anothrNick/github-tag-action@v1.71.0
         id: tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
