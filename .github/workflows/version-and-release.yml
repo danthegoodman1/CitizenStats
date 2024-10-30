@@ -19,15 +19,7 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Cache Wine
-        id: cache-wine
-        uses: actions/cache@v3
-        with:
-          path: /usr/bin/wine*
-          key: wine-${{ runner.os }}
-
       - name: Install Wine
-        if: steps.cache-wine.outputs.cache-hit != 'true'
         run: |
           sudo dpkg --add-architecture i386
           sudo apt-get update
