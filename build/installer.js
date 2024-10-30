@@ -14,7 +14,7 @@ async function createInstaller() {
       // iconUrl: path.join(__dirname, '../src/assets/logo.ico'),
       // setupIcon: path.join(__dirname, '../src/assets/logo.ico'),
       noMsi: true,
-      loadingGif: path.join(__dirname, '../src/assets/installer.gif'), // optional
+      // loadingGif: path.join(__dirname, '../src/assets/installer.gif'), // optional
       setupExe: 'CitizenStatsSetup.exe'
     });
     console.log('Installer created successfully!');
