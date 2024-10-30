@@ -4,9 +4,9 @@ import (
 	"context"
 	"os"
 	"path/filepath"
-	
-	"githubcom/danthegoodman1/CitizenStats/icon"
-	"githubcom/danthegoodman1/CitizenStats/utils"
+
+	"github.com/danthegoodman1/CitizenStats/icon"
+	"github.com/danthegoodman1/CitizenStats/utils"
 
 	"github.com/danthegoodman1/CitizenStats/gologger"
 	"github.com/getlantern/systray"
