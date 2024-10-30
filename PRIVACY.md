@@ -7,3 +7,4 @@ We only collect the logs that are relevant for current leaderboards. Currently t
 - Actor death
 - Vehicle destruction
 - Corpse
+- AccountLoginCharacterStatus_Character (to verify the user)
