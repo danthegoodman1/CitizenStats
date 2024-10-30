@@ -1,6 +1,6 @@
 {
   "name": "citizenstats",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Star Citizen log tailer for aggregating player stats",
   "repository": "https://github.com/danthegoodman1/CitizenStats",
   "main": "dist/index.js",
@@ -33,6 +33,7 @@
   "dependencies": {
     "electron-log": "^5.2.0",
     "electron-squirrel-startup": "^1.0.1",
-    "electron-store": "^8.1.0"
+    "electron-store": "^8.1.0",
+    "update-electron-app": "^3.0.0"
   }
 }
