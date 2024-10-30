@@ -56,6 +56,6 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            out/make/**/*
+            out/make/squirrel.windows/x64/*.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
