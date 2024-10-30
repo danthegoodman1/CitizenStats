@@ -1,0 +1,48 @@
+{
+  "product": "CitizenStats",
+  "company": "CitizenStats",
+  "license": "TERMS.md",
+  "upgrade-code": "2F0D3F6A-0B2E-4D4F-8D4B-D1D1F7C2A123",
+  "files": {
+    "guid": "61126EA9-AC5E-4C5B-B147-5F13A4C5E012",
+    "items": [
+      "citizenstats.exe",
+      "citizenstats-uninstaller.exe"
+    ]
+  },
+  "directories": [
+    "C:\\Program Files\\CitizenStats"
+  ],
+  "env": {
+    "guid": "0CB88C7E-5F23-4C3A-91D8-7548B28B2115",
+    "vars": [
+      {
+        "name": "PATH",
+        "value": "[INSTALLDIR]",
+        "permanent": "no",
+        "system": "no",
+        "action": "set",
+        "part": "last"
+      }
+    ]
+  },
+  "shortcuts": {
+    "guid": "B54A6B9D-D24F-4C82-939D-B7E7C3D7126E",
+    "items": [
+      {
+        "name": "CitizenStats",
+        "description": "Star Citizen Stats Tracker",
+        "target": "[INSTALLDIR]\\citizenstats.exe",
+        "wdir": "INSTALLDIR",
+        "arguments": "-mode run",
+        "icon": "citizenstats.exe"
+      }
+    ]
+  },
+  "choco": {
+    "description": "Star Citizen Stats Tracker",
+    "project-url": "https://github.com/danthegoodman1/CitizenStats",
+    "tags": "star-citizen gaming stats",
+    "license-url": "https://github.com/danthegoodman1/CitizenStats/blob/main/TERMS.md"
+  }
+} 

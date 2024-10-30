@@ -68,6 +68,37 @@ jobs:
         run: |
           go build -ldflags="-X main.Version=${VERSION} -X gologger.Version=${VERSION} -X main.mode=uninstall" -o ./dist/citizenstats-uninstaller.exe
 
+      # Install WiX toolset
+      - name: Install WiX
+        run: |
+          curl -L https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip -o wix.zip
+          unzip wix.zip -d wix
+          echo "$PWD/wix" >> $GITHUB_PATH
+
+      # Install go-msi
+      - name: Install go-msi
+        run: |
+          go install github.com/mh-cbon/go-msi@latest
+
+      # Create MSI installer
+      - name: Create MSI
+        env:
+          VERSION: ${{ steps.tag.outputs.new_tag }}
+        run: |
+          go-msi make --msi ./dist/citizenstats-$VERSION.msi --version ${VERSION#v} --src .
+
+      # Add the MSI to the release files
+      - name: Update Release Files
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ./dist/citizenstats.exe
+            ./dist/citizenstats-installer.exe
+            ./dist/citizenstats-uninstaller.exe
+            ./dist/citizenstats-${{ steps.tag.outputs.new_tag }}.msi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       # Create GitHub release
       - name: Create Release
         uses: softprops/action-gh-release@v1
@@ -80,5 +111,6 @@ jobs:
             ./dist/citizenstats.exe
             ./dist/citizenstats-installer.exe
             ./dist/citizenstats-uninstaller.exe
+            ./dist/citizenstats-${{ steps.tag.outputs.new_tag }}.msi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
