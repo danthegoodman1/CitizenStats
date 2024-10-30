@@ -7,7 +7,6 @@ import log from 'electron-log';
 import { updateElectronApp } from 'update-electron-app'
 updateElectronApp({
 	logger: log,
-	updateInterval: '1 hour'
 })
 
 // Add log configuration near the top of the file, after imports
