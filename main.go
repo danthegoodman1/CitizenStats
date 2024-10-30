@@ -134,7 +134,7 @@ func install() {
 		logger.Fatal().Err(err).Msg("failed to enable startup")
 	}
 
-	logger.Info().Str("version", version).Msg("successfully installed")
+	logger.Info().Msg("successfully installed")
 
 	// Show success message box
 	showMessageBox(
