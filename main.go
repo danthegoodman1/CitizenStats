@@ -8,6 +8,7 @@ import (
 	"github.com/danthegoodman1/CitizenStats/gologger"
 	"github.com/danthegoodman1/CitizenStats/utils"
 	"github.com/getlantern/systray"
+	"golang.org/x/sys/windows"
 )
 
 var logger = gologger.NewLogger()
@@ -74,6 +75,13 @@ func install() {
 	}
 
 	logger.Info().Str("version", version).Msg("successfully installed")
+
+	// Show success message box
+	showMessageBox(
+		"CitizenStats Installation",
+		"CitizenStats has been successfully installed!\n\nThe application will start automatically when you restart your computer.",
+		windows.MB_OK|windows.MB_ICONINFORMATION,
+	)
 }
 
 func uninstall() {
@@ -94,4 +102,17 @@ func uninstall() {
 	}
 
 	logger.Info().Msg("successfully uninstalled")
+
+	// Show success message box
+	showMessageBox(
+		"CitizenStats Uninstallation",
+		"CitizenStats has been successfully uninstalled.",
+		windows.MB_OK|windows.MB_ICONINFORMATION,
+	)
+}
+
+func showMessageBox(title, message string, flags uint32) {
+	caption := windows.StringToUTF16Ptr(title)
+	text := windows.StringToUTF16Ptr(message)
+	windows.MessageBox(0, text, caption, flags)
 }
