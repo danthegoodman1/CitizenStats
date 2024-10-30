@@ -8,6 +8,9 @@ const version = app.getVersion();
 const icon = nativeImage.createFromPath(join(__dirname, 'assets', 'logo_64.png'));
 let tailer: FileTailer | null = null;
 
+// handles the finalization of the squirel setup/update process. E.g. adds start menu icons
+if (require('electron-squirrel-startup')) app.quit();
+
 // Add single instance lock
 const gotTheLock = app.requestSingleInstanceLock();
 
