@@ -20,16 +20,18 @@ func TailFile(filePath string, stop <-chan struct{}) <-chan string {
 			case <-stop:
 				return
 			default:
-				file, err := os.Open(filePath)
+				// Open file with explicit sharing flags for Windows
+				file, err := os.OpenFile(filePath, os.O_RDONLY, 0666)
 				if err != nil {
-					// File doesn't exist or can't be opened
-					// Wait a bit and retry
 					time.Sleep(time.Second)
 					continue
 				}
 
 				// Seek to last known position
-				file.Seek(offset, 0)
+				if _, err := file.Seek(offset, 0); err != nil {
+					// Reset offset if seek fails
+					offset = 0
+				}
 
 				scanner := bufio.NewScanner(file)
 				for scanner.Scan() {
@@ -38,14 +40,15 @@ func TailFile(filePath string, stop <-chan struct{}) <-chan string {
 						file.Close()
 						return
 					case lines <- scanner.Text():
-						offset, _ = file.Seek(0, 1) // Get current position
+						// Get current position, handle potential errors
+						newOffset, err := file.Seek(0, 1)
+						if err == nil {
+							offset = newOffset
+						}
 					}
 				}
 
 				file.Close()
-
-				// If we're here, we either hit EOF or an error
-				// Wait a bit before trying again
 				time.Sleep(time.Second)
 			}
 		}
