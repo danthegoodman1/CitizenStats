@@ -1,5 +1,4 @@
 target
-build
 .idea
 *.log
 node_modules
