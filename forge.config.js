@@ -1,6 +1,7 @@
 module.exports = {
   packagerConfig: {
     asar: true,
+    icon: "icons/icon",
   },
   rebuildConfig: {},
   makers: [
@@ -8,9 +9,9 @@ module.exports = {
       name: "@electron-forge/maker-squirrel",
       /** @type {import("@electron-forge/maker-squirrel").MakerSquirrelConfig} MakerSquirrelConfig */
       config: {
-        setupIcon: "./logo_64.png",
-        iconUrl: "https://raw.githubusercontent.com/danthegoodman1/CitizenStats/refs/heads/electron/icon.png", // need this stupid shit
-        icon: "./logo_64.png",
+        // this is really stupid...
+        iconUrl: "https://raw.githubusercontent.com/danthegoodman1/CitizenStats/refs/heads/electron/icon.ico", // need this stupid shit
+        setupIcon: "./src/assets/logo_64.ico",
         name: "CitizenStats",
       },
     },
