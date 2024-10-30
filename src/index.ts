@@ -59,7 +59,7 @@ if (!gotTheLock) {
 					log.debug('Parsed log of interest:', parsedLine);
 
 					if (parsedLine.kind === 'AccountLoginCharacterStatus_Character') {
-						playerInfo = parseAuthLogLine(parsedLine.content);
+						playerInfo = parseAuthLogLine(line);
 						log.info('Player info:', playerInfo);
 					}
 				}
