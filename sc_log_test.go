@@ -16,6 +16,7 @@ func TestParseLogLines(t *testing.T) {
 	// Split into lines and process
 	lines := strings.Split(string(content), "\n")
 	levelCounts := make(map[string]int)
+	logKindCounts := make(map[string]int)
 
 	for _, line := range lines {
 		// Skip empty lines
@@ -30,9 +31,21 @@ func TestParseLogLines(t *testing.T) {
 		}
 
 		// Count levels
-		levelCounts[logLine.Level]++
+		if logLine.Level != nil {
+			levelCounts[*logLine.Level]++
+		} else {
+			levelCounts["<no-level>"]++
+		}
+
+		// Count LogKinds
+		if logLine.Kind != nil {
+			logKindCounts[*logLine.Kind]++
+		} else {
+			logKindCounts["<no-kind>"]++
+		}
 	}
 
-	// Print the results
+	// Print both results
 	t.Logf("Log level counts: %v", levelCounts)
+	t.Logf("Log kind counts: %v", logKindCounts)
 }

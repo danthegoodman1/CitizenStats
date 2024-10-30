@@ -8,16 +8,18 @@ import (
 
 type SCLogLine struct {
 	Time    time.Time
-	Level   string
+	Level   *string
+	Kind    *string
 	Content string
 }
 
 func parseLogLine(logLine string) *SCLogLine {
-	// Regular expression to match the components
+	// Updated regex to capture Kind
 	// 1st group: timestamp inside <>
 	// 2nd group: optional log level inside []
-	// 3rd group: remaining content
-	re := regexp.MustCompile(`^<([^>]+)>\s*(?:\[([^\]]+)\])?\s*(.+)$`)
+	// 3rd group: optional Kind inside <>
+	// 4th group: remaining content
+	re := regexp.MustCompile(`^<([^>]+)>\s*(?:\[([^\]]+)\])?\s*(?:<([^>]+)>)?\s*(.*)$`)
 
 	matches := re.FindStringSubmatch(logLine)
 	if matches == nil {
@@ -33,27 +35,33 @@ func parseLogLine(logLine string) *SCLogLine {
 	}
 
 	// Handle log level
-	var level string
+	var level *string
 	if matches[2] != "" {
 		levelStr := matches[2]
 		// Only accept specific log levels
 		switch levelStr {
 		case "Notice", "Trace", "Warn", "Error":
-			level = levelStr
+			level = &levelStr
 		default:
-			// Ignore other log levels
-			level = "unknown"
+			// Leave as nil for unknown levels
+			level = nil
 		}
-	} else {
-		level = "unknown"
+	}
+
+	// Handle Kind
+	var kind *string
+	if matches[3] != "" {
+		kindStr := matches[3]
+		kind = &kindStr
 	}
 
 	// Get remaining content
-	content := strings.TrimSpace(matches[3])
+	content := strings.TrimSpace(matches[4])
 
 	return &SCLogLine{
 		Time:    timestamp,
 		Level:   level,
+		Kind:    kind,
 		Content: content,
 	}
 }
