@@ -51,11 +51,12 @@ if (!gotTheLock) {
 				const parsedLine = parseLogLine(line);
 				if (parsedLine) {
 					// Handle the parsed log line here
-					log.debug('Parsed log:', parsedLine);
 					if (!['Corpse', 'Vehicle Destruction', 'Actor Death', 'AccountLoginCharacterStatus_Character'].includes(parsedLine.kind)) {
 						// we don't care about other logs
 						return
 					}
+					
+					log.debug('Parsed log of interest:', parsedLine);
 
 					if (parsedLine.kind === 'AccountLoginCharacterStatus_Character') {
 						playerInfo = parseAuthLogLine(parsedLine.content);
