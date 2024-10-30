@@ -10,9 +10,8 @@ module.exports = {
       /** @type {import("@electron-forge/maker-squirrel").MakerSquirrelConfig} MakerSquirrelConfig */
       config: {
         // this is really stupid...
-        iconUrl: "https://raw.githubusercontent.com/danthegoodman1/CitizenStats/refs/heads/electron/icon.ico", // need this stupid shit
+        iconUrl: "https://raw.githubusercontent.com/danthegoodman1/CitizenStats/refs/heads/electron/src/assets/icon.ico", // need this stupid shit
         setupIcon: "./src/assets/logo_64.ico",
-        name: "CitizenStats",
       },
     },
     {
