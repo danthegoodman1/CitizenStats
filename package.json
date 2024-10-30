@@ -30,6 +30,7 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
+    "electron-log": "^5.2.0",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^8.1.0"
   }
