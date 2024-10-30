@@ -20,6 +20,14 @@ if (!gotTheLock) {
 	app.whenReady().then(() => {
 		const tray = new Tray(icon.resize({ height: 16, width: 16 }));
 
+		// Set start at login to true by default if it hasn't been set before
+		if (!app.getLoginItemSettings().openAtLogin) {
+			app.setLoginItemSettings({
+				openAtLogin: true,
+				path: app.getPath('exe')
+			});
+		}
+
 		// Initialize log tailer
 		const logPath = 'C:\\Program Files\\Roberts Space Industries\\StarCitizen\\LIVE\\Game.log';
 		tailer = new FileTailer(logPath);
