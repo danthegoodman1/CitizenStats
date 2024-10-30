@@ -25,11 +25,9 @@ jobs:
           node-version: '20'
 
       - name: Install Electron dependencies
-        working-directory: ./electron
         run: npm install
 
       - name: Build Electron app
-        working-directory: ./electron
         run: npm run package:win
 
       - name: Bump version and push tag
@@ -48,6 +46,6 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            ./electron/out/citizenstats-win32-x64/**/*
+            ./out/citizenstats-win32-x64/**/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
