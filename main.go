@@ -154,17 +154,12 @@ func uninstall() {
 		// Continue with uninstall even if this fails
 	}
 
-	// Remove the installation directory and all contents
-	if err := os.RemoveAll(installDir); err != nil {
-		logger.Fatal().Err(err).Msg("failed to remove installation directory")
-	}
-
 	logger.Info().Msg("successfully uninstalled")
 
 	// Show success message box
 	showMessageBox(
 		"CitizenStats Uninstallation",
-		"CitizenStats has been successfully uninstalled.",
+		"CitizenStats has been successfully uninstalled. You can now delete the CitizenStats folder.",
 		windows.MB_OK|windows.MB_ICONINFORMATION,
 	)
 }

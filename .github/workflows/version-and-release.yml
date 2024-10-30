@@ -35,6 +35,12 @@ jobs:
           WITH_V: true
           DEFAULT_BUMP: patch
 
+      # Add this step before the build steps
+      - name: Generate version info
+        run: |
+          go install github.com/josephspurrier/goversioninfo/cmd/goversioninfo@latest
+          goversioninfo -platform-specific=true
+
       # Build normal mode binary (no console)
       - name: Build normal mode
         env:
