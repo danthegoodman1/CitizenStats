@@ -2,7 +2,7 @@
   "name": "citizenstats",
   "version": "0.0.2",
   "description": "Star Citizen log tailer for aggregating player stats",
-  "repository": "https://github.com/danthegoodman1/CitizenStats",
+  "repository": "github:danthegoodman1/CitizenStats",
   "main": "dist/index.js",
   "scripts": {
     "prebuild": "node scripts/build-config.js",

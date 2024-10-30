@@ -5,10 +5,14 @@ import { parseAuthLogLine, parseLogLine, SCAuthLogLine } from './SCLog.js';
 import log from 'electron-log';
 import { LogShipper } from './SCLog.js';
 import config from './config.json';
-import { updateElectronApp } from 'update-electron-app'
+import { updateElectronApp, UpdateSourceType } from 'update-electron-app'
 
 updateElectronApp({
 	logger: log,
+	updateSource: {
+    type: UpdateSourceType.ElectronPublicUpdateService,
+    repo: 'danthegoodman1/CitizenStats'
+  },
 })
 
 // Add log configuration near the top of the file, after imports
