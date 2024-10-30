@@ -1,6 +1,6 @@
 # CitizenStats
 
-Star Citizen bot for sharing stats online, or through a Discord bot (COMING SOON).
+Star Citizen bot for track and sharing your player stats in Discord and online (COMING SOON).
 
 This works by "tailing" (watching updates to) the game log, and aggregating the relevant logs within a database that can be queried by the Discord bot and website.
 
@@ -38,4 +38,3 @@ See how we handle your [Privacy](PRIVACY.md) and ensure you do not violate our [
 ## Contributing
 
 Contributions are open and welcome! But please open an issue so we can discuss first, as we won't accept unplanned contributions.
-# CitizenStats
