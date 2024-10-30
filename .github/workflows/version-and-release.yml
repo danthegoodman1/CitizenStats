@@ -47,6 +47,12 @@ jobs:
           WITH_V: true
           DEFAULT_BUMP: patch
 
+      - name: Update package.json version
+        run: |
+          # Remove 'v' prefix from tag and update package.json
+          NEW_VERSION=$(echo ${{ steps.tag.outputs.new_tag }} | sed 's/^v//')
+          npm version $NEW_VERSION --no-git-tag-version --allow-same-version
+
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
