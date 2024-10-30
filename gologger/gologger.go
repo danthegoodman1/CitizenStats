@@ -13,7 +13,7 @@ import (
 )
 
 // Version is set during build using ldflags
-var Version = "dev"
+var Version string
 
 func init() {
 	l := NewLogger()
