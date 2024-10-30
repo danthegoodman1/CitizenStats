@@ -82,11 +82,13 @@ jobs:
 
       # Setup go-msi template
       - name: Setup go-msi
+        env:
+          VERSION: ${{ steps.tag.outputs.new_tag }}
         run: |
           mkdir -p templates
           go-msi check-json --path wix.json
           go-msi set-guid --path wix.json --force
-          go-msi generate-templates --path wix.json --out templates/
+          go-msi generate-templates --path wix.json --out templates/ --version ${VERSION#v}
 
       # Create MSI installer
       - name: Create MSI
