@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"os"
+	"os/exec"
 	"path/filepath"
 
 	"github.com/danthegoodman1/CitizenStats/icon"
@@ -21,7 +22,13 @@ func main() {
 	switch mode {
 	case "install":
 		install()
-		run()
+		// Launch the installed executable as a new process
+		exePath := filepath.Join(`C:\Program Files\CitizenStats`, "citizenstats.exe")
+		cmd := exec.Command(exePath, "-mode", "run")
+		if err := cmd.Start(); err != nil {
+			logger.Fatal().Err(err).Msg("failed to start installed executable")
+		}
+		os.Exit(0)
 	case "uninstall":
 		uninstall()
 	case "run":
