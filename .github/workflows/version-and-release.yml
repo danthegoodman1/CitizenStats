@@ -32,13 +32,6 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build application
-        run: npm run build
-
-      - name: Build Electron app
-        run: |
-          npm run make
-
       - name: Bump version and push tag
         uses: anothrNick/github-tag-action@v1
         id: tag
@@ -52,6 +45,13 @@ jobs:
           # Remove 'v' prefix from tag and update package.json
           NEW_VERSION=$(echo ${{ steps.tag.outputs.new_tag }} | sed 's/^v//')
           npm version $NEW_VERSION --no-git-tag-version --allow-same-version
+
+      - name: Build application
+        run: npm run build
+
+      - name: Build Electron app
+        run: |
+          npm run make
 
       - name: Create Release
         uses: softprops/action-gh-release@v1

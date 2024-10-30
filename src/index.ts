@@ -4,8 +4,11 @@ import { FileTailer } from './tailLog';
 import { parseLogLine } from './SCLog';
 import log from 'electron-log';
 
-const { updateElectronApp } = require('update-electron-app')
-updateElectronApp()
+import { updateElectronApp } from 'update-electron-app'
+updateElectronApp({
+	logger: log,
+	updateInterval: '1 hour'
+})
 
 // Add log configuration near the top of the file, after imports
 log.transports.file.maxSize = 10 * 1024 * 1024; // 10MB
