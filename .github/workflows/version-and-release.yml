@@ -14,21 +14,29 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
+      - name: Cache Wine
+        id: cache-wine
+        uses: actions/cache@v3
+        with:
+          path: /usr/bin/wine*
+          key: wine-${{ runner.os }}
+
       - name: Install Wine
+        if: steps.cache-wine.outputs.cache-hit != 'true'
         run: |
           sudo dpkg --add-architecture i386
           sudo apt-get update
           sudo apt-get install -y wine64 wine32
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install dependencies
         run: npm install
@@ -39,7 +47,7 @@ jobs:
       - name: Build Electron app
         run: |
           npm run package:win
-          npm run create-installer-win
+          npm run make
 
       - name: Bump version and push tag
         uses: anothrNick/github-tag-action@v1
