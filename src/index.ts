@@ -5,7 +5,7 @@ import { parseLogLine } from './SCLog';
 import log from 'electron-log';
 
 const version = app.getVersion();
-const icon = nativeImage.createFromPath(join(__dirname, 'assets', 'logo_64.png'));
+const icon = nativeImage.createFromPath(join(__dirname, 'assets', 'logo-64.png'));
 let tailer: FileTailer | null = null;
 
 // handles the finalization of the squirel setup/update process. E.g. adds start menu icons
