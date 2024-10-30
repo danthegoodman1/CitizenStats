@@ -5,6 +5,7 @@
   "repository": "https://github.com/danthegoodman1/CitizenStats",
   "main": "dist/index.js",
   "scripts": {
+    "prebuild": "node scripts/build-config.js",
     "build": "tsc && cp -r src/assets dist",
     "watch": "tsc -w",
     "test": "vitest",

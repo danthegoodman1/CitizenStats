@@ -1,8 +1,12 @@
+import fetchWithRetry from "./fetch";
+import log from 'electron-log';
+
 export interface SCLogLine {
     time: Date;
     level: string | null;
     kind: string | null;
     content: string;
+    originalContent: string;
 }
 
 export function parseLogLine(logLine: string): SCLogLine | null {
@@ -42,6 +46,7 @@ export function parseLogLine(logLine: string): SCLogLine | null {
         level,
         kind,
         content,
+        originalContent: logLine,
     };
 }
 
@@ -76,4 +81,85 @@ export function parseAuthLogLine(logLine: string): SCAuthLogLine | null {
         characterName: matches[5],
         state: matches[6]
     };
+}
+
+export class LogShipper {
+    private buffer: SCLogLine[] = [];
+    private playerInfo: SCAuthLogLine | null = null;
+    private apiEndpoint: string;
+    private lastShipTime: number = 0;
+    private shipInterval: number
+    private shipTimeout: NodeJS.Timeout | null = null;
+
+    constructor(apiEndpoint: string, shipInterval: number = 1000) {
+        this.apiEndpoint = apiEndpoint;
+        this.shipInterval = shipInterval;
+    }
+
+    public async handleLogLine(logLine: SCLogLine) {
+        this.buffer.push(logLine);
+
+        if (this.playerInfo) {
+            this.scheduleShipment();
+        }
+    }
+
+    private scheduleShipment() {
+        if (this.shipTimeout) return; // Already scheduled
+
+        const now = Date.now();
+        const timeSinceLastShip = now - this.lastShipTime;
+        const timeToWait = Math.max(0, this.shipInterval - timeSinceLastShip);
+
+        this.shipTimeout = setTimeout(() => this.shipBatch(), timeToWait);
+    }
+
+    private async shipBatch() {
+        if (this.buffer.length === 0) {
+            this.shipTimeout = null;
+            return;
+        }
+
+        // Skip shipping if API endpoint is blank
+        if (!this.apiEndpoint.trim()) {
+            log.warn('Skipping log shipment: API endpoint is blank');
+            this.buffer = []; // Clear buffer since we won't be sending these logs
+            this.shipTimeout = null;
+            return;
+        }
+
+        const eventsToShip = [...this.buffer];
+        this.buffer = [];
+        this.lastShipTime = Date.now();
+        this.shipTimeout = null;
+
+        const payload = {
+            player: this.playerInfo,
+            events: eventsToShip
+        };
+
+        try {
+            await fetchWithRetry(this.apiEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload)
+            });
+        } catch (error) {
+            log.error('Failed to ship logs:', error);
+            // On failure, add back to buffer
+            this.buffer = [...eventsToShip, ...this.buffer];
+            this.scheduleShipment(); // Try again later
+        }
+    }
+
+    public setPlayerInfo(player: SCAuthLogLine) {
+        this.playerInfo = player;
+
+        // If we have buffered logs, schedule a shipment
+        if (this.buffer.length > 0) {
+            this.scheduleShipment();
+        }
+    }
 }

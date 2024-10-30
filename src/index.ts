@@ -3,6 +3,8 @@ import { join } from 'path';
 import { FileTailer } from './tailLog.js';
 import { parseAuthLogLine, parseLogLine, SCAuthLogLine } from './SCLog.js';
 import log from 'electron-log';
+import { LogShipper } from './SCLog.js';
+import config from './config.json';
 
 import { updateElectronApp } from 'update-electron-app'
 updateElectronApp({
@@ -58,6 +60,7 @@ if (!gotTheLock) {
 		tailer = new FileTailer(logPath);
 
 		let playerInfo: SCAuthLogLine | null = null;
+		const logShipper = new LogShipper(config.apiEndpoint);
 
 		// Start tailing when app starts
 		tailer.start({
@@ -79,7 +82,11 @@ if (!gotTheLock) {
 							return;
 						}
 						log.info('Detected player info:', playerInfo);
+						logShipper.setPlayerInfo(playerInfo);
 					}
+
+					// Ship the log line
+					logShipper.handleLogLine(parsedLine);
 				}
 			},
 			onError: (error) => {
