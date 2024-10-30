@@ -2,3 +2,6 @@ target
 build
 .idea
 *.log
+node_modules
+dist
+out

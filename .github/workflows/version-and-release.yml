@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - main
+      - electron
 
-# Add permissions block
 permissions:
   contents: write
   packages: write
@@ -14,19 +14,24 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      # Checkout code with full history for versioning
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # Setup Go environment
-      - name: Set up Go
-        uses: actions/setup-go@v5
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          go-version: '>=1.23.2'
+          node-version: '20'
 
-      # Get next version and create tag
+      - name: Install Electron dependencies
+        working-directory: ./electron
+        run: npm install
+
+      - name: Build Electron app
+        working-directory: ./electron
+        run: npm run package:win
+
       - name: Bump version and push tag
         uses: anothrNick/github-tag-action@v1
         id: tag
@@ -35,40 +40,6 @@ jobs:
           WITH_V: true
           DEFAULT_BUMP: patch
 
-      # Add this step before the build steps
-      - name: Generate version info
-        run: |
-          go install github.com/josephspurrier/goversioninfo/cmd/goversioninfo@latest
-          goversioninfo -platform-specific=true
-
-      # Build normal mode binary (no console)
-      - name: Build normal mode
-        env:
-          VERSION: ${{ steps.tag.outputs.new_tag }}
-          GOOS: windows
-          GOARCH: amd64
-        run: |
-          go build -ldflags="-H=windowsgui -X main.Version=${VERSION} -X gologger.Version=${VERSION} -X main.mode=run" -o ./dist/citizenstats.exe
-
-      # Build install mode binary (keep console)
-      - name: Build install mode
-        env:
-          VERSION: ${{ steps.tag.outputs.new_tag }}
-          GOOS: windows
-          GOARCH: amd64
-        run: |
-          go build -ldflags="-X main.Version=${VERSION} -X gologger.Version=${VERSION} -X main.mode=install" -o ./dist/citizenstats-installer.exe
-
-      # Build uninstall mode binary (keep console)
-      - name: Build uninstall mode
-        env:
-          VERSION: ${{ steps.tag.outputs.new_tag }}
-          GOOS: windows
-          GOARCH: amd64
-        run: |
-          go build -ldflags="-X main.Version=${VERSION} -X gologger.Version=${VERSION} -X main.mode=uninstall" -o ./dist/citizenstats-uninstaller.exe
-
-      # Create GitHub release
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
@@ -77,8 +48,6 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            ./dist/citizenstats.exe
-            ./dist/citizenstats-installer.exe
-            ./dist/citizenstats-uninstaller.exe
+            ./electron/out/citizenstats-win32-x64/**/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
