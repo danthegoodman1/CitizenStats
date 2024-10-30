@@ -129,7 +129,6 @@ export class LogShipper {
         }
 
         const eventsToShip = [...this.buffer];
-        this.buffer = [];
         this.lastShipTime = Date.now();
         this.shipTimeout = null;
 
@@ -146,10 +145,10 @@ export class LogShipper {
                 },
                 body: JSON.stringify(payload)
             });
+            // Only clear the buffer after successful API call
+            this.buffer = [];
         } catch (error) {
             log.error('Failed to ship logs:', error);
-            // On failure, add back to buffer
-            this.buffer = [...eventsToShip, ...this.buffer];
             this.scheduleShipment(); // Try again later
         }
     }

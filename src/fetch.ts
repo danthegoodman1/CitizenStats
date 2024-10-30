@@ -21,6 +21,11 @@ export default async function fetchWithRetry(
     try {
       const response = await fetch(url, options);
 
+      // Throw immediately on 4xx client errors
+      if (response.status >= 400 && response.status < 500) {
+        throw new Error(`Client error: ${response.status}: ${await response.text()}`);
+      }
+
       // Only retry on 5xx server errors
       if (response.status < 500 || response.status >= 600) {
         return response;
