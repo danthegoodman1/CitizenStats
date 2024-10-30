@@ -6,8 +6,7 @@
   "files": {
     "guid": "61126EA9-AC5E-4C5B-B147-5F13A4C5E012",
     "items": [
-      "citizenstats.exe",
-      "citizenstats-uninstaller.exe"
+      "citizenstats.exe"
     ]
   },
   "directories": [

@@ -80,6 +80,7 @@ jobs:
         run: |
           go install github.com/mh-cbon/go-msi@latest
           mkdir -p $GITHUB_WORKSPACE/templates
+          curl -L https://raw.githubusercontent.com/mh-cbon/go-msi/master/templates/product.wxs -o $GITHUB_WORKSPACE/templates/product.wxs
 
       # Create MSI installer
       - name: Create MSI
@@ -90,7 +91,8 @@ jobs:
           go-msi set-guid --path wix.json --force
           go-msi make --msi ./dist/citizenstats-$VERSION.msi --version ${VERSION#v} \
             --path wix.json \
-            --arch amd64
+            --arch amd64 \
+            --src $GITHUB_WORKSPACE/templates
 
       # Add the MSI to the release files
       - name: Update Release Files
