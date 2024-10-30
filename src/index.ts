@@ -31,6 +31,7 @@ try {
 	log.error('Error creating icon:', error);
 	icon = nativeImage.createEmpty();
 }
+
 let tailer: FileTailer | null = null;
 
 // handles the finalization of the squirel setup/update process. E.g. adds start menu icons
