@@ -60,6 +60,10 @@ if (!gotTheLock) {
 
 					if (parsedLine.kind === 'AccountLoginCharacterStatus_Character') {
 						playerInfo = parseAuthLogLine(line);
+						if (!playerInfo) {
+							log.error('Failed to parse player info from line:', line);
+							return;
+						}
 						log.info('Player info:', playerInfo);
 					}
 				}
