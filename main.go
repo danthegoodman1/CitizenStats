@@ -16,7 +16,7 @@ import (
 
 var logger = gologger.NewLogger()
 
-// set with ldflags
+// set with
 var mode string
 var Version string
 
@@ -134,7 +134,7 @@ func install() {
 		logger.Fatal().Err(err).Msg("failed to enable startup")
 	}
 
-	logger.Info().Msg("successfully installed")
+	logger.Info().Str("version", version).Msg("successfully installed")
 
 	// Show success message box
 	showMessageBox(
