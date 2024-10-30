@@ -50,49 +50,23 @@ jobs:
         run: |
           go build -ldflags="-H=windowsgui -X main.Version=${VERSION} -X gologger.Version=${VERSION} -X main.mode=run" -o ./dist/citizenstats.exe
 
-      # # Build install mode binary (keep console)
-      # - name: Build install mode
-      #   env:
-      #     VERSION: ${{ steps.tag.outputs.new_tag }}
-      #     GOOS: windows
-      #     GOARCH: amd64
-      #   run: |
-      #     go build -ldflags="-X main.Version=${VERSION} -X gologger.Version=${VERSION} -X main.mode=install" -o ./dist/citizenstats-installer.exe
-
-      # # Build uninstall mode binary (keep console)
-      # - name: Build uninstall mode
-      #   env:
-      #     VERSION: ${{ steps.tag.outputs.new_tag }}
-      #     GOOS: windows
-      #     GOARCH: amd64
-      #   run: |
-      #     go build -ldflags="-X main.Version=${VERSION} -X gologger.Version=${VERSION} -X main.mode=uninstall" -o ./dist/citizenstats-uninstaller.exe
-
-      # Install WiX toolset
-      - name: Install WiX
-        run: |
-          curl -L https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip -o wix.zip
-          unzip wix.zip -d wix
-          echo "$PWD/wix" >> $GITHUB_PATH
-
-      # Install go-msi and get templates
-      - name: Install go-msi
-        run: |
-          go install github.com/mh-cbon/go-msi@latest
-          mkdir -p $GITHUB_WORKSPACE/templates
-          curl -L https://raw.githubusercontent.com/mh-cbon/go-msi/master/templates/product.wxs -o $GITHUB_WORKSPACE/templates/product.wxs
-          curl -L https://raw.githubusercontent.com/mh-cbon/go-msi/master/templates/LicenseAgreementDlg_HK.wsx -o $GITHUB_WORKSPACE/templates/LicenseAgreementDlg_HK.wsx
-          curl -L https://raw.githubusercontent.com/mh-cbon/go-msi/master/templates/WixUI_HK.wsx -o $GITHUB_WORKSPACE/templates/WixUI_HK.wsx
-
-      # Create MSI installer
-      - name: Create MSI
+      # Build install mode binary (keep console)
+      - name: Build install mode
         env:
           VERSION: ${{ steps.tag.outputs.new_tag }}
+          GOOS: windows
+          GOARCH: amd64
         run: |
-          go-msi make --msi ./dist/citizenstats-$VERSION.msi --version ${VERSION#v} \
-            --path wix.json \
-            --arch amd64 \
-            --src $GITHUB_WORKSPACE/templates
+          go build -ldflags="-X main.Version=${VERSION} -X gologger.Version=${VERSION} -X main.mode=install" -o ./dist/citizenstats-installer.exe
+
+      # Build uninstall mode binary (keep console)
+      - name: Build uninstall mode
+        env:
+          VERSION: ${{ steps.tag.outputs.new_tag }}
+          GOOS: windows
+          GOARCH: amd64
+        run: |
+          go build -ldflags="-X main.Version=${VERSION} -X gologger.Version=${VERSION} -X main.mode=uninstall" -o ./dist/citizenstats-uninstaller.exe
 
       # Add the MSI to the release files
       - name: Update Release Files
