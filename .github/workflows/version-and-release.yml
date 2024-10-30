@@ -35,16 +35,16 @@ jobs:
           WITH_V: true
           DEFAULT_BUMP: patch
 
-      # Build normal mode binary
+      # Build normal mode binary (no console)
       - name: Build normal mode
         env:
           VERSION: ${{ steps.tag.outputs.new_tag }}
           GOOS: windows
           GOARCH: 386
         run: |
-          go build -ldflags="-X main.Version=${VERSION} -X main.mode=run" -o ./dist/citizenstats.exe
+          go build -ldflags="-H=windowsgui -X main.Version=${VERSION} -X main.mode=run" -o ./dist/citizenstats.exe
 
-      # Build install mode binary
+      # Build install mode binary (keep console)
       - name: Build install mode
         env:
           VERSION: ${{ steps.tag.outputs.new_tag }}
@@ -53,7 +53,7 @@ jobs:
         run: |
           go build -ldflags="-X main.Version=${VERSION} -X main.mode=install" -o ./dist/citizenstats-installer.exe
 
-      # Build uninstall mode binary
+      # Build uninstall mode binary (keep console)
       - name: Build uninstall mode
         env:
           VERSION: ${{ steps.tag.outputs.new_tag }}
