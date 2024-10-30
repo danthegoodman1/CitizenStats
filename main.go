@@ -16,7 +16,9 @@ import (
 
 var logger = gologger.NewLogger()
 
+// set with ldflags
 var mode string
+var Version string
 
 func main() {
 	switch mode {
@@ -57,7 +59,7 @@ func onReady() {
 	mStatus.Disable()
 
 	// Add version info (disabled/non-clickable)
-	mVersion := systray.AddMenuItem("Version: "+gologger.Version, "Current Version")
+	mVersion := systray.AddMenuItem("Version: "+Version, "Current Version")
 	mVersion.Disable()
 
 	// Add separator
