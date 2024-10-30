@@ -4,6 +4,9 @@ import (
 	"context"
 	"os"
 	"path/filepath"
+	"syscall"
+
+	"golang.org/x/sys/windows"
 
 	"github.com/danthegoodman1/CitizenStats/gologger"
 	"github.com/danthegoodman1/CitizenStats/utils"
@@ -74,6 +77,10 @@ func install() {
 	}
 
 	logger.Info().Str("version", version).Msg("successfully installed")
+
+	// Show success message box
+	title, msg := windows.StringToUTF16Ptr("CitizenStats"), windows.StringToUTF16Ptr("CitizenStats has been successfully installed!")
+	syscall.MessageBox(0, msg, title, 0x40) // 0x40 is MB_ICONINFORMATION
 }
 
 func uninstall() {
@@ -94,4 +101,8 @@ func uninstall() {
 	}
 
 	logger.Info().Msg("successfully uninstalled")
+
+	// Show success message box
+	title, msg := windows.StringToUTF16Ptr("CitizenStats"), windows.StringToUTF16Ptr("CitizenStats has been successfully uninstalled!")
+	syscall.MessageBox(0, msg, title, 0x40)
 }
