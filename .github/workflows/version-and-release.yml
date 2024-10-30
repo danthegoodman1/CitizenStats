@@ -53,14 +53,14 @@ jobs:
         run: |
           go build -ldflags="-X main.Version=${VERSION} -X main.mode=install" -o ./dist/citizenstats-installer.exe
 
-      # Build install mode binary
-      - name: Build install mode
+      # Build uninstall mode binary
+      - name: Build uninstall mode
         env:
           VERSION: ${{ steps.tag.outputs.new_tag }}
           GOOS: windows
           GOARCH: 386
         run: |
-          go build -ldflags="-X main.Version=${VERSION} -X main.install=uninstall" -o ./dist/citizenstats-uninstaller.exe
+          go build -ldflags="-X main.Version=${VERSION} -X main.mode=uninstall" -o ./dist/citizenstats-uninstaller.exe
 
       # Create GitHub release
       - name: Create Release
@@ -73,6 +73,6 @@ jobs:
           files: |
             ./dist/citizenstats.exe
             ./dist/citizenstats-installer.exe
-            ./dist/citizenstats-installer.exe
+            ./dist/citizenstats-uninstaller.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
