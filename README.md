@@ -46,3 +46,5 @@ If you'd like to suggest a feature, please open an issue in this repo with the `
 Contributions are open and welcome! But please open an issue so we can discuss first, as we won't accept unplanned contributions.
 
 While this log collector is open source (so that users can review code and compile themselves), the discord bot and website are currently closed source for operational efficiency. They may be opened in the future!
+
+Need to submit builds to https://www.microsoft.com/en-us/wdsi/filesubmission to prevent them from being flagged on download!
