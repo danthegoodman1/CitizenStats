@@ -8,66 +8,80 @@ const version = app.getVersion();
 const icon = nativeImage.createFromPath(join(__dirname, 'assets', 'logo-64.png'));
 let tailer: FileTailer | null = null;
 
-app.whenReady().then(() => {
-	const tray = new Tray(icon.resize({ height: 16, width: 16 }));
+// Add single instance lock
+const gotTheLock = app.requestSingleInstanceLock();
 
-	// Initialize log tailer
-	const logPath = 'C:\\Program Files\\Roberts Space Industries\\StarCitizen\\LIVE\\Game.log';
-	tailer = new FileTailer(logPath);
+if (!gotTheLock) {
+	app.quit();
+} else {
+	app.whenReady().then(() => {
+		const tray = new Tray(icon.resize({ height: 16, width: 16 }));
 
-	// Start tailing when app starts
-	tailer.start({
-		onLine: (line) => {
-			const parsedLine = parseLogLine(line);
-			if (parsedLine) {
-				// Handle the parsed log line here
-				log.info('Parsed log:', parsedLine);
-			}
-		},
-		onError: (error) => {
-			log.error('Log tail error:', error);
-		}
-	});
+		// Initialize log tailer
+		const logPath = 'C:\\Program Files\\Roberts Space Industries\\StarCitizen\\LIVE\\Game.log';
+		tailer = new FileTailer(logPath);
 
-	const setTray = () => {
-		const contextMenu = Menu.buildFromTemplate([
-			{
-				label: 'CitizenStats',
-				enabled: false,
-			},
-			{
-				label: 'Status: Running',
-				enabled: false,
-			},
-			{
-				label: `Version: ${version}`,
-				enabled: false,
-			},
-			{ type: 'separator' },
-			{
-				label: 'Start at Login',
-				type: 'checkbox',
-				checked: app.getLoginItemSettings().openAtLogin,
-				click(menuItem) {
-					app.setLoginItemSettings({
-						openAtLogin: menuItem.checked,
-						path: app.getPath('exe')
-					});
+		// Start tailing when app starts
+		tailer.start({
+			onLine: (line) => {
+				const parsedLine = parseLogLine(line);
+				if (parsedLine) {
+					// Handle the parsed log line here
+					log.info('Parsed log:', parsedLine);
 				}
 			},
-			{
-				label: 'Quit',
-				click() {
-					app.quit();
+			onError: (error) => {
+				log.error('Log tail error:', error);
+			}
+		});
+
+		const setTray = () => {
+			const contextMenu = Menu.buildFromTemplate([
+				{
+					label: 'CitizenStats',
+					enabled: false,
 				},
-			},
-		]);
+				{
+					label: 'Status: Running',
+					enabled: false,
+				},
+				{
+					label: `Version: ${version}`,
+					enabled: false,
+				},
+				{ type: 'separator' },
+				{
+					label: 'Start at Login',
+					type: 'checkbox',
+					checked: app.getLoginItemSettings().openAtLogin,
+					click(menuItem) {
+						app.setLoginItemSettings({
+							openAtLogin: menuItem.checked,
+							path: app.getPath('exe')
+						});
+					}
+				},
+				{
+					label: 'Quit',
+					click() {
+						app.quit();
+					},
+				},
+			]);
 
-		tray.setContextMenu(contextMenu);
-		tray.setToolTip('CitizenStats Status');
-	};
+			tray.setContextMenu(contextMenu);
+			tray.setToolTip('CitizenStats Status');
+		};
 
-	setTray();
+		setTray();
+	});
+}
+
+// Add after the else block, before the whenReady call
+app.on('second-instance', () => {
+	// Focus the existing instance's window if you have one
+	// Or show a notification that the app is already running
+	log.info('Application is already running');
 });
 
 // Handle app quit
