@@ -7,13 +7,18 @@ import (
 
 var logger = gologger.NewLogger()
 
-var installMode bool
+var mode string
 
 func main() {
-	if installMode {
+	switch mode {
+	case "install":
 		install()
-	} else {
+	case "uninstall":
+		uninstall()
+	case "run":
 		run()
+	default:
+		logger.Fatal().Msgf("invalid mode '%s', must be one of: install, uninstall, run", mode)
 	}
 }
 
@@ -33,4 +38,9 @@ func onExit() {
 
 func install() {
 
+}
+
+func uninstall() {
+	logger.Info().Msg("uninstalling")
+	// Add uninstallation logic here
 }

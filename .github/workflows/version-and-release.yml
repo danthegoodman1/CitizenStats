@@ -1,0 +1,73 @@
+name: Version and Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout code with full history for versioning
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Setup Go environment
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '>=1.21.0'
+
+      # Get next version and create tag
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@v1
+        id: tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
+          DEFAULT_BUMP: patch
+
+      # Build normal mode binary
+      - name: Build normal mode
+        env:
+          VERSION: ${{ steps.tag.outputs.new_tag }}
+          GOOS: windows
+          GOARCH: 386
+        run: |
+          go build -ldflags="-X main.Version=${VERSION} -X main.mode=run" -o ./dist/citizenstats.exe
+
+      # Build install mode binary
+      - name: Build install mode
+        env:
+          VERSION: ${{ steps.tag.outputs.new_tag }}
+          GOOS: windows
+          GOARCH: 386
+        run: |
+          go build -ldflags="-X main.Version=${VERSION} -X main.mode=install" -o ./dist/citizenstats-installer.exe
+
+      # Build install mode binary
+      - name: Build install mode
+        env:
+          VERSION: ${{ steps.tag.outputs.new_tag }}
+          GOOS: windows
+          GOARCH: 386
+        run: |
+          go build -ldflags="-X main.Version=${VERSION} -X main.install=uninstall" -o ./dist/citizenstats-uninstaller.exe
+
+      # Create GitHub release
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.tag.outputs.new_tag }}
+          name: Release v${{ steps.tag.outputs.new_tag }}
+          draft: false
+          prerelease: false
+          files: |
+            ./dist/citizenstats.exe
+            ./dist/citizenstats-installer.exe
+            ./dist/citizenstats-installer.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

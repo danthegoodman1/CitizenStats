@@ -14,11 +14,6 @@ type SCLogLine struct {
 }
 
 func parseLogLine(logLine string) *SCLogLine {
-	// Updated regex to capture Kind
-	// 1st group: timestamp inside <>
-	// 2nd group: optional log level inside []
-	// 3rd group: optional Kind inside <>
-	// 4th group: remaining content
 	re := regexp.MustCompile(`^<([^>]+)>\s*(?:\[([^\]]+)\])?\s*(?:<([^>]+)>)?\s*(.*)$`)
 
 	matches := re.FindStringSubmatch(logLine)

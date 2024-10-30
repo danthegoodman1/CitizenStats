@@ -57,11 +57,12 @@ func NewLogger() zerolog.Logger {
 
 	zerolog.TimestampFieldName = "time"
 
-	logger := zerolog.New(os.Stdout).With().Timestamp().Str("version", Version).Logger()
+	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
 
 	logger = logger.Hook(CallerHook{})
 
 	logger = logger.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	// logger = logger.With().Str("version", Version).Logger()
 	zerolog.SetGlobalLevel(zerolog.DebugLevel)
 
 	return logger
