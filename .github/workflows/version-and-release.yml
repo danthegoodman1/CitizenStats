@@ -75,10 +75,13 @@ jobs:
           unzip wix.zip -d wix
           echo "$PWD/wix" >> $GITHUB_PATH
 
-      # Install go-msi
+      # Install go-msi and get templates
       - name: Install go-msi
         run: |
           go install github.com/mh-cbon/go-msi@latest
+          mkdir -p templates
+          curl -L https://raw.githubusercontent.com/mh-cbon/go-msi/master/templates/wix.json.tmpl -o templates/wix.json.tmpl
+          curl -L https://raw.githubusercontent.com/mh-cbon/go-msi/master/templates/product.wxs -o templates/product.wxs
 
       # Create MSI installer
       - name: Create MSI
@@ -87,7 +90,7 @@ jobs:
         run: |
           go-msi check-json --path wix.json
           go-msi set-guid --path wix.json --force
-          go-msi make --msi ./dist/citizenstats-$VERSION.msi --version ${VERSION#v} --src $GITHUB_WORKSPACE --path wix.json --arch 386
+          go-msi make --msi ./dist/citizenstats-$VERSION.msi --version ${VERSION#v} --src $GITHUB_WORKSPACE --path wix.json --arch 386 --out templates/
 
       # Add the MSI to the release files
       - name: Update Release Files
