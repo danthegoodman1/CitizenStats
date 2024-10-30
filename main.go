@@ -44,6 +44,7 @@ func run() {
 	systray.Run(onReady, onExit)
 }
 
+// see https://github.com/getlantern/systray/blob/master/example/main.go
 func onReady() {
 	// Set icon from embedded resource
 	systray.SetTemplateIcon(icon.Data, icon.Data)
@@ -54,6 +55,13 @@ func onReady() {
 	// Add status menu item (disabled/non-clickable)
 	mStatus := systray.AddMenuItem("Status: Running", "Current Status")
 	mStatus.Disable()
+
+	// Add version info (disabled/non-clickable)
+	mVersion := systray.AddMenuItem("Version: "+gologger.Version, "Current Version")
+	mVersion.Disable()
+
+	// Add separator
+	systray.AddSeparator()
 
 	// Add startup toggle
 	startupPath := filepath.Join(`C:\Program Files\CitizenStats`, "citizenstats.exe")
