@@ -68,16 +68,6 @@ jobs:
         run: |
           go build -ldflags="-X main.Version=${VERSION} -X gologger.Version=${VERSION} -X main.mode=uninstall" -o ./dist/citizenstats-uninstaller.exe
 
-      # Add the MSI to the release files
-      - name: Update Release Files
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            ./dist/citizenstats.exe
-            ./dist/citizenstats-${{ steps.tag.outputs.new_tag }}.msi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       # Create GitHub release
       - name: Create Release
         uses: softprops/action-gh-release@v1
@@ -88,6 +78,7 @@ jobs:
           prerelease: false
           files: |
             ./dist/citizenstats.exe
-            ./dist/citizenstats-${{ steps.tag.outputs.new_tag }}.msi
+            ./dist/citizenstats-installer.exe
+            ./dist/citizenstats-uninstaller.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
