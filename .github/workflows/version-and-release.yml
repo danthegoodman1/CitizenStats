@@ -47,10 +47,17 @@ jobs:
           npm version $NEW_VERSION --no-git-tag-version --allow-same-version
 
       - name: Build application
-        run: npm run build
+        env:
+          API_ENDPOINT: ${{ secrets.API_ENDPOINT }}
+        run: |
+          npm run prebuild
+          npm run build
 
       - name: Build Electron app
+        env:
+          API_ENDPOINT: ${{ secrets.API_ENDPOINT }}
         run: |
+          npm run prebuild
           npm run make
 
       - name: List output files
