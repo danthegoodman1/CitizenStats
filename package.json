@@ -15,7 +15,7 @@
     "create-installer-win": "node build/installer.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Dan Goodman (github.com/danthegoodman1)",
   "license": "ISC",
   "devDependencies": {
     "@electron-forge/cli": "^6.4.1",
