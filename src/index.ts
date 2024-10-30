@@ -4,7 +4,6 @@ import { FileTailer } from './tailLog.js';
 import { parseAuthLogLine, parseLogLine, SCAuthLogLine } from './SCLog.js';
 import log from 'electron-log';
 import { LogShipper } from './SCLog.js';
-import config from './config.json';
 
 // Add log configuration near the top of the file, after imports
 log.transports.file.maxSize = 10 * 1024 * 1024; // 10MB
@@ -55,7 +54,7 @@ if (!gotTheLock) {
 		tailer = new FileTailer(logPath);
 
 		let playerInfo: SCAuthLogLine | null = null;
-		const logShipper = new LogShipper(config.apiEndpoint);
+		const logShipper = new LogShipper('');
 
 		// Start tailing when app starts
 		tailer.start({
