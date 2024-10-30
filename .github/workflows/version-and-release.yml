@@ -37,7 +37,9 @@ jobs:
         run: npm run build
 
       - name: Build Electron app
-        run: npm run package:win
+        run: |
+          npm run package:win
+          npm run create-installer-win
 
       - name: Bump version and push tag
         uses: anothrNick/github-tag-action@v1
@@ -55,6 +57,6 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            ./out/citizenstats-win32-x64/**/*
+            ./installers/CitizenStatsSetup.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
