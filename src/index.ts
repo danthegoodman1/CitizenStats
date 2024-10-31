@@ -55,10 +55,16 @@ if (!gotTheLock) {
 
 		let playerInfo: SCAuthLogLine | null = null;
 		const logShipper = new LogShipper('');
+		let location: 'pu' | 'ac' | null = null;
 
 		// Start tailing when app starts
 		tailer.start({
 			onLine: (line) => {
+				if (line.includes('Loading screen for pu')) {
+					location = 'pu';
+				} else if (line.includes('Loading screen for ac') || line.match(/\[.*ArenaCommander.*\]/)) {
+					location = 'ac';
+				}
 				const parsedLine = parseLogLine(line);
 				if (parsedLine) {
 					// Handle the parsed log line here

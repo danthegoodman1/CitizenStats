@@ -7,6 +7,7 @@ export interface SCLogLine {
     kind: string | null;
     content: string;
     originalContent: string;
+    logLocation?: 'pu' | 'ac';
 }
 
 export function parseLogLine(logLine: string): SCLogLine | null {
