@@ -54,7 +54,7 @@ if (!gotTheLock) {
 		tailer = new FileTailer(logPath);
 
 		let playerInfo: SCAuthLogLine | null = null;
-		const logShipper = new LogShipper('');
+		const logShipper = new LogShipper('https://api.citizenstats.app/logs');
 		let location: 'pu' | 'ac' | null = null;
 
 		// Start tailing when app starts
