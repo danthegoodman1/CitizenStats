@@ -138,7 +138,7 @@ if (!gotTheLock) {
 							const newPath = result.filePaths[0];
 							store.set('logPath', newPath);
 							log.info(`Updated log path to: ${newPath}`);
-							
+
 							// Stop the current tailer
 							if (tailer) {
 								tailer.stop();
