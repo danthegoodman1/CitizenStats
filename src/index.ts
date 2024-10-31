@@ -1,9 +1,12 @@
-import { app, Tray, Menu, nativeImage } from 'electron';
+import { app, Tray, Menu, nativeImage, dialog } from 'electron';
 import { join } from 'path';
 import { FileTailer } from './tailLog.js';
 import { parseAuthLogLine, parseLogLine, SCAuthLogLine } from './SCLog.js';
 import log from 'electron-log';
 import { LogShipper } from './SCLog.js';
+import Store = require('electron-store');
+
+const store = new Store();
 
 // Add log configuration near the top of the file, after imports
 log.transports.file.maxSize = 10 * 1024 * 1024; // 10MB
@@ -50,7 +53,7 @@ if (!gotTheLock) {
 		}
 
 		// Initialize log tailer
-		const logPath = 'C:\\Program Files\\Roberts Space Industries\\StarCitizen\\LIVE\\Game.log';
+		const logPath = store.get('logPath', 'C:\\Program Files\\Roberts Space Industries\\StarCitizen\\LIVE\\Game.log') as string;
 		tailer = new FileTailer(logPath);
 
 		let playerInfo: SCAuthLogLine | null = null;
@@ -118,6 +121,33 @@ if (!gotTheLock) {
 							openAtLogin: menuItem.checked,
 							path: app.getPath('exe')
 						});
+					}
+				},
+				{
+					label: 'Set Game Log Path',
+					click: async () => {
+						const result = await dialog.showOpenDialog({
+							properties: ['openFile'],
+							filters: [
+								{ name: 'Log Files', extensions: ['log'] }
+							],
+							defaultPath: store.get('logPath', 'C:\\Program Files\\Roberts Space Industries\\StarCitizen\\LIVE\\Game.log') as string
+						});
+
+						if (!result.canceled && result.filePaths.length > 0) {
+							const newPath = result.filePaths[0];
+							store.set('logPath', newPath);
+							log.info(`Updated log path to: ${newPath}`);
+							
+							// Stop the current tailer
+							if (tailer) {
+								tailer.stop();
+							}
+
+							// Relaunch the application
+							app.relaunch();
+							app.quit();
+						}
 					}
 				},
 				{
