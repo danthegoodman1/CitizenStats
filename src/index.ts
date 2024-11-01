@@ -89,7 +89,10 @@ if (!gotTheLock) {
 					}
 
 					// Ship the log line
-					logShipper.handleLogLine(parsedLine);
+					logShipper.handleLogLine({
+						...parsedLine,
+						logLocation: location
+					});
 				}
 			},
 			onError: (error) => {
