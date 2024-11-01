@@ -157,6 +157,7 @@ export class LogShipper {
             // Only clear the buffer after successful API call
             this.buffer = [];
             this.shipRetries = 0;  // Reset retries on success
+            log.info(`Shipped ${eventsToShip.length} log events`);
         } catch (error) {
             this.shipRetries++;
             log.error(`Failed to ship logs (attempt ${this.shipRetries}/${this.maxRetries}):`, error);
