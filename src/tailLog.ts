@@ -6,6 +6,7 @@ import { EventEmitter } from 'events';
 interface TailOptions {
     onLine: (line: string) => void;
     onError?: (error: Error) => void;
+    pollInterval?: number;
 }
 
 export class FileTailer extends EventEmitter {
@@ -20,12 +21,21 @@ export class FileTailer extends EventEmitter {
         this.watcher = new AbortController();
     }
 
-    async start({ onLine, onError = console.error }: TailOptions): Promise<void> {
+    async start({ onLine, onError = console.error, pollInterval = 1000 }: TailOptions): Promise<void> {
         this.isRunning = true;
 
         const watchFile = async () => {
             try {
-                // Watch for file changes
+                const checkChanges = async () => {
+                    if (!this.isRunning) return;
+                    await this.readNewLines(onLine);
+                    if (this.isRunning) {
+                        setTimeout(checkChanges, pollInterval);
+                    }
+                };
+
+                checkChanges();
+
                 const watcher = watch(
                     this.filePath, 
                     { signal: this.watcher.signal }
@@ -40,14 +50,12 @@ export class FileTailer extends EventEmitter {
                 if (err instanceof Error && !err.message.includes('ENOENT')) {
                     onError(err as Error);
                 }
-                // If file doesn't exist, retry after delay
                 if (this.isRunning) {
                     setTimeout(() => watchFile(), 1000);
                 }
             }
         };
 
-        // Initial read and start watching
         await this.readNewLines(onLine);
         watchFile();
     }
@@ -63,7 +71,6 @@ export class FileTailer extends EventEmitter {
             const fileHandle = await open(this.filePath, 'r');
             const stats = await fileHandle.stat();
 
-            // If file size is less than offset, reset offset (file was truncated)
             if (stats.size < this.offset) {
                 this.offset = 0;
             }
@@ -83,7 +90,6 @@ export class FileTailer extends EventEmitter {
                 onLine(line);
             }
 
-            // Update offset
             this.offset = stats.size;
 
             await fileHandle.close();
