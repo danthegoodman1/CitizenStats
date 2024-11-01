@@ -96,6 +96,8 @@ export class LogShipper {
     private lastShipTime: number = 0;
     private shipInterval: number
     private shipTimeout: NodeJS.Timeout | null = null;
+    private shipRetries: number = 0;
+    private maxRetries: number = 100;
 
     constructor(apiEndpoint: string, shipInterval: number = 1000) {
         this.apiEndpoint = apiEndpoint;
@@ -123,6 +125,7 @@ export class LogShipper {
     private async shipBatch() {
         if (this.buffer.length === 0) {
             this.shipTimeout = null;
+            this.shipRetries = 0;  // Reset retries when buffer is empty
             return;
         }
 
@@ -153,9 +156,18 @@ export class LogShipper {
             });
             // Only clear the buffer after successful API call
             this.buffer = [];
+            this.shipRetries = 0;  // Reset retries on success
         } catch (error) {
-            log.error('Failed to ship logs:', error);
-            this.scheduleShipment(); // Try again later
+            this.shipRetries++;
+            log.error(`Failed to ship logs (attempt ${this.shipRetries}/${this.maxRetries}):`, error);
+
+            if (this.shipRetries >= this.maxRetries) {
+                log.warn(`Exceeded maximum retry attempts (${this.maxRetries}). Clearing buffer.`);
+                this.buffer = [];
+                this.shipRetries = 0;
+            } else {
+                this.scheduleShipment(); // Try again later
+            }
         }
     }
 
