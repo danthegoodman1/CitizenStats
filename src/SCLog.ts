@@ -145,7 +145,7 @@ export class LogShipper {
 
         const payload = {
             player: this.playerInfo,
-            events: this.shippingBuffer
+            events: this.shippingBuffer.map(({ content, ...rest }) => rest) // remove content
         };
 
         try {
