@@ -90,7 +90,8 @@ export interface SCLogPayload {
 }
 
 export class LogShipper {
-    private buffer: SCLogLine[] = [];
+    private activeBuffer: SCLogLine[] = [];
+    private shippingBuffer: SCLogLine[] = [];
     private playerInfo: SCAuthLogLine | null = null;
     private apiEndpoint: string;
     private lastShipTime: number = 0;
@@ -105,7 +106,7 @@ export class LogShipper {
     }
 
     public async handleLogLine(logLine: SCLogLine) {
-        this.buffer.push(logLine);
+        this.activeBuffer.push(logLine);
 
         if (this.playerInfo) {
             this.scheduleShipment();
@@ -123,27 +124,28 @@ export class LogShipper {
     }
 
     private async shipBatch() {
-        if (this.buffer.length === 0) {
+        if (this.activeBuffer.length === 0) {
             this.shipTimeout = null;
-            this.shipRetries = 0;  // Reset retries when buffer is empty
+            this.shipRetries = 0;
             return;
         }
 
         // Skip shipping if API endpoint is blank
         if (!this.apiEndpoint.trim()) {
             log.warn('Skipping log shipment: API endpoint is blank');
-            this.buffer = []; // Clear buffer since we won't be sending these logs
+            this.activeBuffer = [];
             this.shipTimeout = null;
             return;
         }
 
-        const eventsToShip = [...this.buffer];
+        // Swap buffers
+        [this.activeBuffer, this.shippingBuffer] = [[], this.activeBuffer];
         this.lastShipTime = Date.now();
         this.shipTimeout = null;
 
         const payload = {
             player: this.playerInfo,
-            events: eventsToShip
+            events: this.shippingBuffer
         };
 
         try {
@@ -154,20 +156,23 @@ export class LogShipper {
                 },
                 body: JSON.stringify(payload)
             });
-            // Only clear the buffer after successful API call
-            this.buffer = [];
-            this.shipRetries = 0;  // Reset retries on success
-            log.info(`Shipped ${eventsToShip.length} log events`);
+            // Clear shipping buffer after successful API call
+            this.shippingBuffer = [];
+            this.shipRetries = 0;
+            log.info(`Shipped ${payload.events.length} log events`);
         } catch (error) {
+            // On failure, move logs back to active buffer
+            this.activeBuffer = [...this.shippingBuffer, ...this.activeBuffer];
+            this.shippingBuffer = [];
             this.shipRetries++;
             log.error(`Failed to ship logs (attempt ${this.shipRetries}/${this.maxRetries}):`, error);
 
             if (this.shipRetries >= this.maxRetries) {
                 log.warn(`Exceeded maximum retry attempts (${this.maxRetries}). Clearing buffer.`);
-                this.buffer = [];
+                this.activeBuffer = [];
                 this.shipRetries = 0;
             } else {
-                this.scheduleShipment(); // Try again later
+                this.scheduleShipment();
             }
         }
     }
@@ -176,7 +181,7 @@ export class LogShipper {
         this.playerInfo = player;
 
         // If we have buffered logs, schedule a shipment
-        if (this.buffer.length > 0) {
+        if (this.activeBuffer.length > 0) {
             this.scheduleShipment();
         }
     }
