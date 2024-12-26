@@ -58,7 +58,12 @@ if (!gotTheLock) {
     async function checkForUpdates() {
       try {
         const versionRes = await fetchWithRetry(
-          "https://api.citizenstats.app/client_version"
+          "https://api.citizenstats.app/client_version",
+          {
+            headers: {
+              "x-version": version,
+            },
+          }
         )
         const versionData =
           (await versionRes.json()) as ExpectedClientVersionResponse
@@ -89,10 +94,20 @@ if (!gotTheLock) {
     tailer = new FileTailer(logPath)
 
     let playerInfo: SCAuthLogLine | null = null
-    const logShipper = new LogShipper("https://api.citizenstats.app/logs")
+    const logShipper = new LogShipper(
+      "https://api.citizenstats.app/logs",
+      version
+    )
     let location: "pu" | "ac" | null = null
 
-    const regexRes = await fetchWithRetry("https://api.citizenstats.app/regex")
+    const regexRes = await fetchWithRetry(
+      "https://api.citizenstats.app/regex",
+      {
+        headers: {
+          "x-version": version,
+        },
+      }
+    )
     const regexData = (await regexRes.json()) as { regex: RegexEntry[] }
 
     // Start tailing when app starts
