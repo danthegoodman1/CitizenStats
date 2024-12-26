@@ -20,12 +20,8 @@ jobs:
 
       - name: Install Wine
         run: |
-          sudo dpkg --add-architecture i386
           sudo apt-get update
-          sudo apt-get install -y wine64 wine32
-          wine --version
-          which wine
-          echo "PATH=$PATH:/usr/bin/wine64" >> $GITHUB_ENV
+          sudo apt-get install -y wine64
 
       - name: Checkout
         uses: actions/checkout@v4
