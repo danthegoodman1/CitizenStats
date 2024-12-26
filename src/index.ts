@@ -123,16 +123,12 @@ if (!gotTheLock) {
         }
         const parsedLine = parseLogLine(line)
         if (parsedLine) {
-          // Handle the parsed log line here
-          if (
-            ![
-              "Corpse",
-              "Vehicle Destruction",
-              "Actor Death",
-              "AccountLoginCharacterStatus_Character",
-            ].includes(parsedLine.kind)
-          ) {
-            // we don't care about other logs
+          // Check if this log type matches any of our regex patterns
+          const matchingRegex = regexData.regex.find((entry) =>
+            new RegExp(entry.regex).test(line)
+          )
+          if (!matchingRegex) {
+            // This line doesn't match any of our regex patterns
             return
           }
 
