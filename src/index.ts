@@ -1,10 +1,11 @@
-import { app, Tray, Menu, nativeImage, dialog } from 'electron';
+import { app, Tray, Menu, nativeImage, dialog, shell } from 'electron';
 import { join } from 'path';
 import { FileTailer } from './tailLog.js';
 import { parseAuthLogLine, parseLogLine, SCAuthLogLine } from './SCLog.js';
 import log from 'electron-log';
 import { LogShipper } from './SCLog.js';
 import Store = require('electron-store');
+import fetchWithRetry from './fetch.js';
 
 const store = new Store();
 
@@ -12,6 +13,15 @@ const store = new Store();
 log.transports.file.maxSize = 10 * 1024 * 1024; // 10MB
 log.transports.file.format = '[{y}-{m}-{d} {h}:{i}:{s}] [{level}] {text}';
 log.transports.file.getFile().clear(); // Clear log file on startup
+
+interface RegexEntry {
+	regex: string
+	name: string
+}
+
+interface ExpectedClientVersionResponse {
+	version: string
+}
 
 const version = app.getVersion();
 let icon;
@@ -41,8 +51,24 @@ const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
 	app.quit();
 } else {
-	app.whenReady().then(() => {
+	app.whenReady().then(async () => {
 		const tray = new Tray(icon.resize({ height: 16, width: 16 }));
+
+		// Add version check function
+		async function checkForUpdates() {
+			try {
+				const versionRes = await fetchWithRetry('https://api.citizenstats.app/client_version');
+				const versionData = await versionRes.json() as ExpectedClientVersionResponse;
+				
+				if (versionData.version !== version) {
+					log.info(`Update available: ${versionData.version}`);
+					return versionData.version;
+				}
+			} catch (error) {
+				log.error('Failed to check for updates:', error);
+			}
+			return null;
+		};
 
 		// Set start at login to true by default if it hasn't been set before
 		if (!app.getLoginItemSettings().openAtLogin) {
@@ -59,6 +85,9 @@ if (!gotTheLock) {
 		let playerInfo: SCAuthLogLine | null = null;
 		const logShipper = new LogShipper('https://api.citizenstats.app/logs');
 		let location: 'pu' | 'ac' | null = null;
+
+		const regexRes = await fetchWithRetry('https://api.citizenstats.app/regex');
+		const regexData = await regexRes.json() as { regex: RegexEntry[] };
 
 		// Start tailing when app starts
 		tailer.start({
@@ -100,12 +129,21 @@ if (!gotTheLock) {
 			}
 		});
 
-		const setTray = () => {
+		const setTray = async () => {
+			const latestVersion = await checkForUpdates();
+			
 			const contextMenu = Menu.buildFromTemplate([
 				{
 					label: 'CitizenStats',
 					enabled: false,
 				},
+				// Add update item if available
+				...(latestVersion ? [{
+					label: `Update available: ${latestVersion}`,
+					click: () => {
+						shell.openExternal(`https://github.com/danthegoodman1/CitizenStats/releases/tag/${latestVersion}`);
+					}
+				}] : []),
 				{
 					label: 'Status: Running',
 					enabled: false,
@@ -166,6 +204,11 @@ if (!gotTheLock) {
 		};
 
 		setTray();
+		
+		// Check for updates every hour
+		setInterval(() => {
+			setTray();
+		}, 60 * 60 * 1000);
 	});
 }
 
