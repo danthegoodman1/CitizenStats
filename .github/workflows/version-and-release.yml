@@ -26,7 +26,7 @@ jobs:
 
       - name: Link Wine
         run: |
-          sudo ln -sf /usr/bin/wine64 /usr/bin/wine
+          sudo ln -sf /usr/bin/wine /usr/bin/wine64
           which wine64
 
       - name: Checkout
