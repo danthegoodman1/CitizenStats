@@ -23,6 +23,9 @@ jobs:
           sudo dpkg --add-architecture i386
           sudo apt-get update
           sudo apt-get install -y wine64 wine32
+          wine64 --version
+          which wine64
+          echo "PATH=$PATH:/usr/bin/wine64" >> $GITHUB_ENV
 
       - name: Checkout
         uses: actions/checkout@v4
