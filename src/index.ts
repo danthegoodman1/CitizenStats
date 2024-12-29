@@ -156,27 +156,12 @@ if (!gotTheLock) {
       },
     })
 
-    const setTray = async () => {
-      const latestVersion = await checkForUpdates()
-
+    const setTray = () => {
       const contextMenu = Menu.buildFromTemplate([
         {
           label: "CitizenStats",
           enabled: false,
         },
-        // Add update item if available
-        ...(latestVersion
-          ? [
-              {
-                label: `Update available: ${latestVersion}`,
-                click: () => {
-                  shell.openExternal(
-                    `https://github.com/danthegoodman1/CitizenStats/releases/tag/${latestVersion}`
-                  )
-                },
-              },
-            ]
-          : []),
         {
           label: "Status: Running",
           enabled: false,
@@ -240,9 +225,9 @@ if (!gotTheLock) {
     setTray()
 
     // Check for updates every hour
-    setInterval(() => {
-      setTray()
-    }, 60 * 60 * 1000)
+    // setInterval(() => {
+    //   setTray()
+    // }, 60 * 60 * 1000)
   })
 }
 
