@@ -106,7 +106,7 @@ if (!gotTheLock) {
     let regexData: { regex: RegexEntry[] } | null = null
     try {
       const regexRes = await fetchWithRetry(
-        "https://api.citizenstats.app/regex",
+        "https://api.citizenstats.app/log_regex",
         {
           headers: {
             "x-version": version,
@@ -117,7 +117,27 @@ if (!gotTheLock) {
       log.info(`Regex data fetched`)
     } catch (error) {
       log.error("Failed to fetch regex data:", error)
-      log.error(error)
+      log.warn("Using default regex data")
+      regexData = {
+        regex: [
+          {
+            regex: " <Actor Death> ",
+            name: "Actor Death",
+          },
+          {
+            regex: " <Vehicle Destruction> ",
+            name: "Vehicle Destruction",
+          },
+          {
+            regex: " <Corpse> ",
+            name: "Corpse",
+          },
+          {
+            regex: " <AccountLoginCharacterStatus_Character> ",
+            name: "AccountLoginCharacterStatus_Character",
+          },
+        ],
+      }
     }
 
     // Start tailing when app starts
