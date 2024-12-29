@@ -72,6 +72,7 @@ if (!gotTheLock) {
           log.info(`Update available: ${versionData.version}`)
           return versionData.version
         }
+        log.info("No update available")
       } catch (error) {
         log.error("Failed to check for updates:", error)
       }
@@ -156,12 +157,27 @@ if (!gotTheLock) {
       },
     })
 
-    const setTray = () => {
+    const setTray = async () => {
+      const latestVersion = await checkForUpdates()
+
       const contextMenu = Menu.buildFromTemplate([
         {
           label: "CitizenStats",
           enabled: false,
         },
+        // Add update item if available
+        ...(latestVersion
+          ? [
+              {
+                label: `Update available: ${latestVersion}`,
+                click: () => {
+                  shell.openExternal(
+                    `https://github.com/danthegoodman1/CitizenStats/releases/tag/${latestVersion}`
+                  )
+                },
+              },
+            ]
+          : []),
         {
           label: "Status: Running",
           enabled: false,
@@ -225,9 +241,9 @@ if (!gotTheLock) {
     setTray()
 
     // Check for updates every hour
-    // setInterval(() => {
-    //   setTray()
-    // }, 60 * 60 * 1000)
+    setInterval(() => {
+      setTray()
+    }, 60 * 60 * 1000)
   })
 }
 
