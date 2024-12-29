@@ -57,6 +57,7 @@ if (!gotTheLock) {
     // Add version check function
     async function checkForUpdates() {
       try {
+        log.info(`Checking for updates with version: ${version}`)
         const versionRes = await fetchWithRetry(
           "https://api.citizenstats.app/client_version",
           {
@@ -101,15 +102,23 @@ if (!gotTheLock) {
     )
     let location: "pu" | "ac" | null = null
 
-    const regexRes = await fetchWithRetry(
-      "https://api.citizenstats.app/regex",
-      {
-        headers: {
-          "x-version": version,
-        },
-      }
-    )
-    const regexData = (await regexRes.json()) as { regex: RegexEntry[] }
+    log.info(`Fetching regex data`)
+    let regexData: { regex: RegexEntry[] } | null = null
+    try {
+      const regexRes = await fetchWithRetry(
+        "https://api.citizenstats.app/regex",
+        {
+          headers: {
+            "x-version": version,
+          },
+        }
+      )
+      regexData = (await regexRes.json()) as { regex: RegexEntry[] }
+      log.info(`Regex data fetched`)
+    } catch (error) {
+      log.error("Failed to fetch regex data:", error)
+      log.error(error)
+    }
 
     // Start tailing when app starts
     tailer.start({
