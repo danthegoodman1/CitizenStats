@@ -172,6 +172,13 @@ export class LogShipper {
       this.shippingBuffer = []
       this.shipRetries = 0
       log.info(`Shipped ${payload.events.length} log events`)
+      log.info(
+        {
+          firstEvent: payload.events[0],
+          lastEvent: payload.events[payload.events.length - 1],
+        },
+        "first and last"
+      )
 
       // Schedule next shipment if there are remaining logs
       if (this.activeBuffer.length > 0) {
