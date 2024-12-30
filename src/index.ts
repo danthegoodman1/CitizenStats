@@ -143,12 +143,9 @@ if (!gotTheLock) {
     // Start tailing when app starts
     tailer.start({
       onLine: (line) => {
-        if (line.includes("Loading screen for pu")) {
+        if (line.includes("{Join PU}")) {
           location = "pu"
-        } else if (
-          line.includes("Loading screen for ac") ||
-          line.match(/\[.*ArenaCommander.*\]/)
-        ) {
+        } else if (line.includes("{Join match}")) {
           location = "ac"
         }
         const parsedLine = parseLogLine(line)
