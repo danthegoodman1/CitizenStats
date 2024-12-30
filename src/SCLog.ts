@@ -183,9 +183,9 @@ export class LogShipper {
       this.shippingBuffer = []
       this.shipRetries++
       log.error(
-        `Failed to ship logs (attempt ${this.shipRetries}/${this.maxRetries}):`,
-        error
+        `Failed to ship logs (attempt ${this.shipRetries}/${this.maxRetries}):`
       )
+      log.error(error)
 
       if (this.shipRetries >= this.maxRetries) {
         log.warn(
