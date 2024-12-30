@@ -147,8 +147,10 @@ export class LogShipper {
       return
     }
 
-    // Swap buffers
-    ;[this.activeBuffer, this.shippingBuffer] = [[], this.activeBuffer]
+    // Take up to 100 items from the active buffer
+    const logsToShip = this.activeBuffer.slice(0, 100)
+    this.activeBuffer = this.activeBuffer.slice(100)
+    this.shippingBuffer = logsToShip
     this.lastShipTime = Date.now()
     this.shipTimeout = null
 
@@ -170,6 +172,11 @@ export class LogShipper {
       this.shippingBuffer = []
       this.shipRetries = 0
       log.info(`Shipped ${payload.events.length} log events`)
+
+      // Schedule next shipment if there are remaining logs
+      if (this.activeBuffer.length > 0) {
+        this.scheduleShipment()
+      }
     } catch (error) {
       // On failure, move logs back to active buffer
       this.activeBuffer = [...this.shippingBuffer, ...this.activeBuffer]
