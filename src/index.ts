@@ -144,8 +144,10 @@ if (!gotTheLock) {
     tailer.start({
       onLine: (line) => {
         if (line.includes("{Join PU}")) {
+          log.info("Detected PU join")
           location = "pu"
         } else if (line.includes("{Join match}")) {
+          log.info("Detected AC join")
           location = "ac"
         }
         const parsedLine = parseLogLine(line)
