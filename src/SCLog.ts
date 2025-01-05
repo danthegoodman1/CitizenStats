@@ -66,7 +66,7 @@ export function parseAuthLogLine(logLine: string): SCAuthLogLine | null {
 
   // Updated regex to allow for additional content after the state
   const regex =
-    /Character: createdAt (\d+) - updatedAt (\d+) - geid (\d+) - accountId (\d+) - name (\w+) - state (\w+)(?:\s+.*)?$/
+    /Character: createdAt (\d+) - updatedAt (\d+) - geid (\d+) - accountId (\d+) - name ([\w-_]+) - state (\w+)(?:\s+.*)?$/
   const matches = baseParsed.content.match(regex)
 
   if (!matches) {
