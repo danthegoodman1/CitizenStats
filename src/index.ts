@@ -200,7 +200,7 @@ if (!gotTheLock) {
                 label: `Update available: ${latestVersion}`,
                 click: () => {
                   shell.openExternal(
-                    `https://github.com/danthegoodman1/CitizenStats/releases/tag/${latestVersion}`
+                    `https://github.com/danthegoodman1/CitizenStats/releases/tag/v${latestVersion}`
                   )
                 },
               },
