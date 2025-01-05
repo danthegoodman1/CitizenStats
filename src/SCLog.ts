@@ -66,17 +66,17 @@ export function parseAuthLogLine(logLine: string): SCAuthLogLine | null {
 
   // Updated regex to allow for additional content after the state
   const regex =
-    /Character: createdAt (\d+) - updatedAt (\d+) - geid (\d+) - accountId (\d+) - name ([\w-_]+) - state (\w+)(?:\s+.*)?$/
+    /Character: createdAt (\d+) - updatedAt (\d+) - geid (\d+) - accountId (\d+) - name ([\w\d-_]+) - state (\w+)(?:\s+.*)?$/
   const matches = baseParsed.content.match(regex)
 
   if (!matches) {
-    console.warn(
+    log.warn(
       `Failed to parse character details. Content: "${baseParsed.content}"`
     )
     return null
   }
 
-  return {
+  const content = {
     ...baseParsed,
     createdAt: parseInt(matches[1]),
     updatedAt: parseInt(matches[2]),
@@ -85,6 +85,9 @@ export function parseAuthLogLine(logLine: string): SCAuthLogLine | null {
     characterName: matches[5],
     state: matches[6],
   }
+  log.info(content, "parsed auth log line")
+
+  return content
 }
 
 export interface SCLogPayload {
