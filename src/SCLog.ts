@@ -136,8 +136,9 @@ export class LogShipper {
   }
 
   private async shipBatch() {
+    this.shipTimeout = null
+
     if (this.activeBuffer.length === 0) {
-      this.shipTimeout = null
       this.shipRetries = 0
       return
     }
@@ -146,20 +147,19 @@ export class LogShipper {
     if (!this.apiEndpoint.trim()) {
       log.warn("Skipping log shipment: API endpoint is blank")
       this.activeBuffer = []
-      this.shipTimeout = null
       return
     }
 
     // Take up to 100 items from the active buffer
     const logsToShip = this.activeBuffer.slice(0, 100)
-    this.activeBuffer = this.activeBuffer.slice(100)
-    this.shippingBuffer = logsToShip
-    this.lastShipTime = Date.now()
-    this.shipTimeout = null
+    // Important: Clear these items from active buffer AFTER successful ship
+    log.debug(
+      `Preparing to ship ${logsToShip.length} logs. Current buffer size: ${this.activeBuffer.length}`
+    )
 
     const payload = {
       player: this.playerInfo,
-      events: this.shippingBuffer.map(({ content, ...rest }) => rest), // remove content
+      events: logsToShip.map(({ content, ...rest }) => rest), // remove content
     }
 
     try {
@@ -171,8 +171,13 @@ export class LogShipper {
         },
         body: JSON.stringify(payload),
       })
-      // Clear shipping buffer after successful API call
-      this.shippingBuffer = []
+
+      // Only remove the shipped logs after successful API call
+      this.activeBuffer = this.activeBuffer.slice(logsToShip.length)
+      log.debug(
+        `Successfully shipped ${logsToShip.length} logs. Remaining buffer size: ${this.activeBuffer.length}`
+      )
+
       this.shipRetries = 0
       log.info(`Shipped ${payload.events.length} log events`)
       log.info(
@@ -188,9 +193,7 @@ export class LogShipper {
         this.scheduleShipment()
       }
     } catch (error) {
-      // On failure, move logs back to active buffer
-      this.activeBuffer = [...this.shippingBuffer, ...this.activeBuffer]
-      this.shippingBuffer = []
+      // On failure, logs remain in active buffer since we never removed them
       this.shipRetries++
       log.error(
         `Failed to ship logs (attempt ${this.shipRetries}/${this.maxRetries}):`
