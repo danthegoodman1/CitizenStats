@@ -143,10 +143,10 @@ if (!gotTheLock) {
     // Start tailing when app starts
     tailer.start({
       onLine: (line) => {
-        if (line.includes("{Join PU}")) {
+        if (line.toLowerCase().includes("{join pu}")) {
           log.info("Detected PU join")
           location = "pu"
-        } else if (line.includes("{Join match}")) {
+        } else if (line.toLowerCase().includes("{join match}")) {
           log.info("Detected AC join")
           location = "ac"
         }
