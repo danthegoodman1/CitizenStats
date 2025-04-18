@@ -1,4 +1,12 @@
-import { app, Tray, Menu, nativeImage, dialog, shell } from "electron"
+import {
+  app,
+  Tray,
+  Menu,
+  nativeImage,
+  dialog,
+  shell,
+  Notification,
+} from "electron"
 import { join } from "path"
 import { FileTailer } from "./tailLog.js"
 import { parseAuthLogLine, parseLogLine, SCAuthLogLine } from "./SCLog.js"
@@ -24,7 +32,7 @@ interface ExpectedClientVersionResponse {
 }
 
 const version = app.getVersion()
-let icon
+let icon: Electron.NativeImage
 try {
   const iconPath = join(__dirname, "assets", "logo-64.png")
   icon = nativeImage.createFromPath(iconPath)
@@ -71,6 +79,29 @@ if (!gotTheLock) {
 
         if (versionData.version !== version) {
           log.info(`Update available: ${versionData.version}`)
+
+          // Check if we've already notified for this version
+          const lastNotifiedVersion = store.get("lastNotifiedVersion", null)
+          if (lastNotifiedVersion !== versionData.version) {
+            // Show notification on Windows
+            if (process.platform === "win32") {
+              new Notification({
+                title: "CitizenStats Update Available",
+                body: `Version ${versionData.version} is now available. Click to download.`,
+                icon: icon,
+              })
+                .on("click", () => {
+                  shell.openExternal(
+                    `https://github.com/danthegoodman1/CitizenStats/releases/tag/v${versionData.version}`
+                  )
+                })
+                .show()
+
+              // Store the version we just notified about
+              store.set("lastNotifiedVersion", versionData.version)
+            }
+          }
+
           return versionData.version
         }
         log.info("No update available")
