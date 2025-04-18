@@ -1,6 +1,6 @@
 {
   "name": "citizenstats",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Star Citizen log tailer for aggregating player stats",
   "repository": "github:danthegoodman1/CitizenStats",
   "main": "dist/index.js",
