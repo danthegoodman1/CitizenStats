@@ -31,6 +31,12 @@ interface ExpectedClientVersionResponse {
   version: string
 }
 
+interface LogConfigResponse {
+  regex: RegexEntry[]
+  puJoinRegex: string
+  acJoinRegex: string
+}
+
 const version = app.getVersion()
 let icon: Electron.NativeImage
 try {
@@ -133,23 +139,24 @@ if (!gotTheLock) {
     )
     let location: "pu" | "ac" | null = null
 
-    log.info(`Fetching regex data`)
-    let regexData: { regex: RegexEntry[] } | null = null
+    log.info(`Fetching log configuration`)
+    let logConfig: LogConfigResponse | null = null
     try {
       const regexRes = await fetchWithRetry(
-        "https://api.citizenstats.app/log_regex",
+        "https://api.citizenstats.app/log_regex", // Assuming the same endpoint for now
         {
           headers: {
             "x-version": version,
           },
         }
       )
-      regexData = (await regexRes.json()) as { regex: RegexEntry[] }
-      log.info(`Regex data fetched`)
+      logConfig = (await regexRes.json()) as LogConfigResponse
+      log.info(`Log configuration fetched`)
     } catch (error) {
-      log.error("Failed to fetch regex data:", error)
-      log.warn("Using default regex data")
-      regexData = {
+      log.error("Failed to fetch log configuration:", error)
+      log.warn("Using default log configuration")
+      // Provide default values including the join strings
+      logConfig = {
         regex: [
           {
             regex: " <Actor Death> ",
@@ -168,23 +175,34 @@ if (!gotTheLock) {
             name: "AccountLoginCharacterStatus_Character",
           },
         ],
+        puJoinRegex: "{join pu}", // Default PU join string
+        acJoinRegex: "{join match}", // Default AC join string
       }
     }
 
     // Start tailing when app starts
     tailer.start({
       onLine: (line) => {
-        if (line.toLowerCase().includes("{join pu}")) {
+        // Use fetched values, providing defaults if logConfig is null or missing properties
+        const puJoinRegexPattern = logConfig?.puJoinRegex ?? "{join pu}"
+        const acJoinRegexPattern = logConfig?.acJoinRegex ?? "{join match}"
+
+        // Create RegExp objects. We'll use case-insensitive matching.
+        const puJoinRegex = new RegExp(puJoinRegexPattern, "i")
+        const acJoinRegex = new RegExp(acJoinRegexPattern, "i")
+
+        if (puJoinRegex.test(line)) {
           log.info("Detected PU join")
           location = "pu"
-        } else if (line.toLowerCase().includes("{join match}")) {
+        } else if (acJoinRegex.test(line)) {
           log.info("Detected AC join")
           location = "ac"
         }
         const parsedLine = parseLogLine(line)
         if (parsedLine) {
           // Check if this log type matches any of our regex patterns
-          const matchingRegex = regexData.regex.find((entry) =>
+          // Use logConfig.regex, providing default empty array if logConfig is null
+          const matchingRegex = (logConfig?.regex ?? []).find((entry) =>
             new RegExp(entry.regex).test(line)
           )
           if (!matchingRegex) {
